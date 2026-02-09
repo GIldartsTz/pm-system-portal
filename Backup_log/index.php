@@ -140,8 +140,13 @@ $is_due_6m = in_array($cur_m, [1, 7]);
                             <?php if(!empty($table_data)): foreach($table_data as $row): $name=$row['equipment_name']; $sum=0; for($i=1;$i<=$days_in_month;$i++) if(isset($row["day_$i"])&&$row["day_$i"]=='1') $sum++; if(isset($row['check_backup_6m'])&&$row['check_backup_6m']=='1') $sum++; if(isset($row['check_recovery_6m'])&&$row['check_recovery_6m']=='1') $sum++; ?>
                             <tr>
                                 <td class="sticky-col"><?=$name?></td>
-                                <?php for($i=1;$i<=$days_in_month;$i++): $val = isset($row["day_$i"]) ? $row["day_$i"] : null; $cls = ($val=='1')?'st-ok':(($val=='0')?'st-fail':'st-null'); $icon = ($val=='1')?'<i class="fa-solid fa-check"></i>':(($val=='0')?'<i class="fa-solid fa-xmark"></i>':''); $type = $day_types[$i]; $td_cls = ($type == 'public') ? 'bg-public' : (($type == 'weekend') ? 'bg-weekend' : ''); ?>
-                                    <td class="c-wrap <?=$td_cls?>" data-sys="<?=$name?>" data-col="day_<?=$i?>" data-val="<?=$val?>"><div class="cell-btn <?=$cls?>"><?=$icon?></div></td>
+                                <?php for($i=1;$i<=$days_in_month;$i++): 
+                                    $val = isset($row["day_$i"]) ? $row["day_$i"] : null; 
+                                    $cls = ($val=='1')?'st-ok':(($val=='0')?'st-fail':'st-null'); 
+                                    $icon = ($val=='1')?'<i class="fa-solid fa-check"></i>':(($val=='0')?'<i class="fa-solid fa-xmark"></i>':''); 
+                                    // 🔥 ลบ logic ใส่สีออกจากตรงนี้แล้ว
+                                ?>
+                                    <td class="c-wrap" data-sys="<?=$name?>" data-col="day_<?=$i?>" data-val="<?=$val?>"><div class="cell-btn <?=$cls?>"><?=$icon?></div></td>
                                 <?php endfor; ?>
                                 <td class="c-wrap" data-sys="<?=$name?>" data-col="check_backup_6m" data-val="<?=isset($row['check_backup_6m'])?$row['check_backup_6m']:null?>"><div class="cell-btn <?=(isset($row['check_backup_6m'])&&$row['check_backup_6m']=='1')?'st-ok':((isset($row['check_backup_6m'])&&$row['check_backup_6m']=='0')?'st-fail':'st-null')?>"><?=(isset($row['check_backup_6m'])&&$row['check_backup_6m']=='1')?'<i class="fa-solid fa-check"></i>':((isset($row['check_backup_6m'])&&$row['check_backup_6m']=='0')?'<i class="fa-solid fa-xmark"></i>':'')?></div></td>
                                 <td class="c-wrap" data-sys="<?=$name?>" data-col="check_recovery_6m" data-val="<?=isset($row['check_recovery_6m'])?$row['check_recovery_6m']:null?>"><div class="cell-btn <?=(isset($row['check_recovery_6m'])&&$row['check_recovery_6m']=='1')?'st-ok':((isset($row['check_recovery_6m'])&&$row['check_recovery_6m']=='0')?'st-fail':'st-null')?>"><?=(isset($row['check_recovery_6m'])&&$row['check_recovery_6m']=='1')?'<i class="fa-solid fa-check"></i>':((isset($row['check_recovery_6m'])&&$row['check_recovery_6m']=='0')?'<i class="fa-solid fa-xmark"></i>':'')?></div></td>
