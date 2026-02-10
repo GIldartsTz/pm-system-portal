@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = mysqli_real_escape_string($conn, $_POST['username']);
     $password = $_POST['password'];
 
-    $sql = "SELECT * FROM users WHERE username = '$username'";
+    $sql = "SELECT id, username, password, role FROM users WHERE username = '$username'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['username'] = $row['username'];
             $_SESSION['fullname'] = $row['fullname'];
+            $_SESSION['role'] = $row['role'];
             
             // ** แก้จุดที่ 1: เปลี่ยนให้เด้งไปหน้า index.php (Home) **
             header("Location: ../index.php"); 

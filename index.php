@@ -12,6 +12,12 @@ if (!isset($_SESSION['user_id'])) { header("Location: login/login.php"); exit();
 
 include 'db.php'; 
 
+// 🔥 [ใหม่] บันทึกเวลาใช้งานล่าสุด (Last Login / Last Active) ลง Database 🔥
+// ใส่ตรงนี้จะช่วยให้เวลาอัปเดตทุกครั้งที่เข้าหน้า Dashboard (ดูเป็น Real-time มากขึ้น)
+$u_id_update = $_SESSION['user_id'];
+$conn->query("UPDATE users SET last_login = NOW() WHERE id = '$u_id_update'");
+// -------------------------------------------------------------
+
 // Dashboard Highlight (สีแดง #f00c2a)
 $dashboard_module = [
     'name' => 'Dashboard Overview', 
@@ -55,9 +61,13 @@ $sub_modules = [
     <main class="main">
         <div class="container">
             <div class="welcome-sec">
-                <h1>Hello, <span><?=htmlspecialchars($_SESSION['fullname'])?></span> 👋</h1>
-                <p>Preventive Maintenance System Portal</p>
+                <h1>Preventive Maintenance System <span><?=htmlspecialchars($_SESSION['fullname'])?></span> 👋</h1>
+                <p>Welcome to the Preventive Maintenance System. Manage your maintenance tasks efficiently.</p>
+                
+                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                 <a href="manage_config.php" class="config-btn"><i class="fa-solid fa-gear"></i> System Config</a>
+                <?php endif; ?>
+                
             </div>
 
             <div class="grid-layout">

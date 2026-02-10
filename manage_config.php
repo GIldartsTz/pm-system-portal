@@ -10,6 +10,18 @@ $_SESSION['last_active'] = time();
 
 if (!isset($_SESSION['user_id'])) { header("Location: login/login.php"); exit(); }
 
+// 🔥 เพิ่มส่วนป้องกันตรงนี้ (Admin Only) 🔥
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    echo "<script>
+        alert('Access Denied: คุณไม่มีสิทธิ์เข้าถึงหน้านี้ (Admin Only)');
+        window.location.href = 'index.php'; 
+    </script>";
+    exit();
+}
+// 🔥 จบส่วนป้องกัน 🔥
+$update_time = "UPDATE users SET last_login = NOW() WHERE id = " . $row['id'];
+$conn->query($update_time);
+
 include 'db.php'; 
 
 // 🔥 AUTO FIX DATA 🔥
