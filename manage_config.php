@@ -1,16 +1,17 @@
 <?php
 session_start();
 
-// --- Session Timeout ---
+// --- Session Timeout (ตัดการเชื่อมต่อถ้าไม่ขยับเมาส์ 1 ชม.) ---
 $timeout = 60 * 60; 
 if (isset($_SESSION['last_active']) && (time() - $_SESSION['last_active'] > $timeout)) {
     session_unset(); session_destroy(); header("Location: login/login.php?timeout=1"); exit();
 }
 $_SESSION['last_active'] = time();
 
+// --- ตรวจสอบว่า Login หรือยัง ---
 if (!isset($_SESSION['user_id'])) { header("Location: login/login.php"); exit(); }
 
-// 🔥 เพิ่มส่วนป้องกันตรงนี้ (Admin Only) 🔥
+// --- 🔥 ระบบป้องกัน: เฉพาะ Admin เท่านั้นที่เข้าได้ 🔥 ---
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     echo "<script>
         alert('Access Denied: คุณไม่มีสิทธิ์เข้าถึงหน้านี้ (Admin Only)');
@@ -18,23 +19,21 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     </script>";
     exit();
 }
-// 🔥 จบส่วนป้องกัน 🔥
-$update_time = "UPDATE users SET last_login = NOW() WHERE id = " . $row['id'];
-$conn->query($update_time);
 
+// --- เชื่อมต่อฐานข้อมูล ---
 include 'db.php'; 
 
-// 🔥 AUTO FIX DATA 🔥
+// 🔥 AUTO FIX DATA (โค้ดช่วยแก้หมวดหมู่ให้อัตโนมัติ) 🔥
 $conn->query("UPDATE master_tasks SET category='hardware' WHERE system_type='hardsoft' AND (category IS NULL OR category='') AND (task_label LIKE '%battery%' OR task_label LIKE '%hardware%' OR task_label LIKE '%disk%' OR task_label LIKE '%temp%' OR task_label LIKE '%firmware%' OR task_label LIKE '%Clean dust%' OR task_label LIKE '%Check cables%')");
 $conn->query("UPDATE master_tasks SET category='software' WHERE system_type='hardsoft' AND (category IS NULL OR category='') AND (task_label LIKE '%app%' OR task_label LIKE '%Window%')");
 
 $msg = ""; $error = "";
 
-// --- (PART 1 & 2: PHP LOGIC ส่วนจัดการข้อมูล เหมือนเดิม) ---
-// ... (Logic เดิม) ...
+// ---------------------------------------------------------
+// ส่วนจัดการข้อมูล (Logic การเพิ่ม/ลบ)
 // ---------------------------------------------------------
 
-// --- PART 1: EQUIPMENT ---
+// --- 1. จัดการอุปกรณ์ (Equipment) ---
 if (isset($_POST['add_equip'])) {
     $sys = $_POST['sys_type'];
     $name = trim(mysqli_real_escape_string($conn, $_POST['eq_name']));
@@ -53,6 +52,7 @@ if (isset($_GET['del_eq'])) {
     if ($q->num_rows > 0) {
         $row = $q->fetch_assoc();
         $name = mysqli_real_escape_string($conn, $row['equipment_name']);
+        // ลบข้อมูล Log ที่เกี่ยวข้อง
         $conn->query("DELETE FROM server_logs WHERE equipment_name='$name'");
         $conn->query("DELETE FROM network_logs WHERE equipment_name='$name'");
         $conn->query("DELETE FROM hardsoft_logs WHERE equipment_name='$name'");
@@ -61,7 +61,7 @@ if (isset($_GET['del_eq'])) {
     }
 }
 
-// --- PART 2: TASKS ---
+// --- 2. จัดการหัวข้อตรวจ (Tasks) ---
 if (isset($_POST['add_task'])) {
     $sys_input = $_POST['sys_type_task']; 
     $label = mysqli_real_escape_string($conn, $_POST['task_label']);
@@ -82,6 +82,7 @@ if (isset($_POST['add_task'])) {
             $new_col = "task_" . $next;
 
             if ($conn->query("INSERT INTO master_tasks (system_type, category, column_name, task_label, frequency) VALUES ('$sys_db', $cat_db, '$new_col', '$label', '$freq')")) {
+                // เพิ่มคอลัมน์จริงในตาราง Logs
                 if ($conn->query("ALTER TABLE $tb_name ADD COLUMN $new_col TINYINT(1) DEFAULT NULL COMMENT '$label ($freq)'")) {
                     $msg = "✅ เพิ่มหัวข้อสำเร็จ!";
                 } else {
@@ -219,7 +220,6 @@ $tasks = $conn->query("SELECT * FROM master_tasks ORDER BY system_type ASC, cate
                                         $display_sys = 'Hardware';
                                         $cls = 'bg-hardware';
                                         if ($current_cat != 'hardware') {
-                                            // 🔥 ใส่ data-cat ที่ Header เพื่อให้ Filter ทำงานถูก
                                             echo "<tr class='section-header' data-sys='hardsoft' data-cat='hardware'><td colspan='4'><i class='fa-solid fa-microchip'></i> Hardware Section</td></tr>";
                                             $current_cat = 'hardware';
                                         }
@@ -227,7 +227,6 @@ $tasks = $conn->query("SELECT * FROM master_tasks ORDER BY system_type ASC, cate
                                         $display_sys = 'Software';
                                         $cls = 'bg-software';
                                         if ($current_cat != 'software') {
-                                            // 🔥 ใส่ data-cat ที่ Header เพื่อให้ Filter ทำงานถูก
                                             echo "<tr class='section-header' data-sys='hardsoft' data-cat='software'><td colspan='4'><i class='fa-brands fa-windows'></i> Software Section</td></tr>";
                                             $current_cat = 'software';
                                         }
