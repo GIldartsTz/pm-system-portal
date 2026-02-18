@@ -38,16 +38,16 @@ $p = isset($path) ? $path : '../';
         </a>
         
         <div class="nav-title">ICT STAFF</div>
-        <a href="<?=$p?>Backup_log/index.php" class="nav-link <?=($current_page=='backup')?'active':''?>">
+        <a href="<?=$p?>Backup_log/backup.php" class="nav-link <?=($current_page=='backup')?'active':''?>">
             <i class="fa-solid fa-database"></i> <span>Backup Log</span>
         </a>
-        <a href="<?=$p?>Server/index.php" class="nav-link <?=($current_page=='server')?'active':''?>">
+        <a href="<?=$p?>Server_log/server.php" class="nav-link <?=($current_page=='server')?'active':''?>">
             <i class="fa-solid fa-server"></i> <span>Server Check</span>
         </a>
-        <a href="<?=$p?>Network/index.php" class="nav-link <?=($current_page=='network')?'active':''?>">
+        <a href="<?=$p?>Network_log/network.php" class="nav-link <?=($current_page=='network')?'active':''?>">
             <i class="fa-solid fa-network-wired"></i> <span>Network</span>
         </a>
-        <a href="<?=$p?>HardSoft/index.php" class="nav-link <?=($current_page=='hardsoft')?'active':''?>">
+        <a href="<?=$p?>HardSoft_log/hardsoft.php" class="nav-link <?=($current_page=='hardsoft')?'active':''?>">
             <i class="fa-solid fa-microchip"></i> <span>H/W & S/W</span>
         </a>
         
