@@ -1,0 +1,59 @@
+/* PM/css/theme.css */
+
+/* นำเข้าฟอนต์ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* --- Light Mode Colors --- */
+    --primary: #4f46e5;       
+    --primary-light: #e0e7ff; 
+    --primary-soft: #4f46e520; 
+    
+    --bg-body: #f8fafc;
+    --bg-card: #ffffff;
+    
+    --text-main: #0f0f0f;
+    --text-sub: #606060;
+    
+    --border: #e5e5e5;
+    --hover: #f1f5f9;
+    --th-bg: #f8fafc;
+    --th-text: #374151;
+    --input-bg: #ffffff;
+
+    /* 🔥 เพิ่มตัวแปรสีสำหรับ Hover แถว (Light Mode) 🔥 */
+    /* ปรับให้เข้มขึ้นและชัดเจนขึ้น เหมือนสไตล์ Dark Mode */
+    --row-hover-bg: #c7d2fe;  /* สีพื้นหลังตอนชี้ (Indigo-200) */
+    --row-hover-text: #1e1b4b; /* สีตัวหนังสือตอนชี้ (Indigo-950 เข้มๆ) */
+}
+
+/* --- Dark Mode Colors --- */
+[data-theme="dark"] {
+    --primary: #6366f1;       
+    --primary-light: #312e81; 
+
+    --bg-body: #0f0f0f;
+    --bg-card: #1e1e1e;
+    
+    --text-main: #f1f1f1;
+    --text-sub: #aaaaaa;
+    
+    --border: #333333;
+    
+    --hover: #2d2d2d;
+    --th-bg: #1e1e1e;
+    --th-text: #e5e7eb;
+    --input-bg: #0f0f0f;
+
+    /* 🔥 เพิ่มตัวแปรสีสำหรับ Hover แถว (Dark Mode) 🔥 */
+    --row-hover-bg: #312e81;  /* สีพื้นหลังตอนชี้ (Indigo-900) */
+    --row-hover-text: #e0e7ff; /* สีตัวหนังสือตอนชี้ (Indigo-100 สว่างๆ) */
+}
+
+/* Reset พื้นฐาน */
+body {
+    font-family: 'Inter', 'Prompt', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}

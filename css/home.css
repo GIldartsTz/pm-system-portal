@@ -1,0 +1,165 @@
+/* PM/css/home.css */
+
+/* 🔥 1. ลบเส้นใต้ทุกลิงก์ 🔥 */
+a { text-decoration: none !important; }
+
+/* =========================================
+   🔥 2. HEADER STYLES (Header) 🔥
+   ========================================= */
+.header {
+    position: fixed; top: 0; left: 0; right: 0; height: 64px;
+    background: var(--bg-card); display: flex; align-items: center;
+    justify-content: space-between; padding: 0 30px;
+    border-bottom: 1px solid var(--border);
+    z-index: 999; 
+    box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.logo { font-weight: 800; font-size: 1.4rem; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+.logo i { color: var(--primary); }
+
+/* =========================================
+   🔥 3. MAIN LAYOUT (จัดกึ่งกลางหน้าจอ) 🔥
+   ========================================= */
+body { 
+    overflow: hidden; /* ล็อค Scroll bar หลัก */
+    margin: 0; 
+    background: var(--bg-body);
+}
+
+.main {
+    margin-top: 64px;
+    width: 100%;
+    
+    /* พื้นที่เลื่อนเนื้อหา */
+    height: calc(100vh - 64px);
+    overflow-y: auto; 
+    
+    padding: 20px;
+    
+    /* 🔥 เพิ่มคำสั่งนี้เพื่อจัดกึ่งกลางแนวตั้งและแนวนอน 🔥 */
+    display: flex;
+    flex-direction: column;
+}
+
+/* กล่องเนื้อหา */
+.container { 
+    width: 100%;
+    max-width: 900px; /* ขนาด Compact */
+    
+    /* 🔥 ทีเด็ด: margin auto จะดันเนื้อหาไปอยู่ตรงกลางแกนตั้งและนอนโดยอัตโนมัติ */
+    margin: auto; 
+}
+
+/* =========================================
+   🔥 4. GRID SYSTEM 🔥
+   ========================================= */
+.grid-layout { 
+    display: grid; 
+    gap: 15px; 
+    grid-template-columns: repeat(4, 1fr); 
+}
+
+/* =========================================
+   🔥 5. DASHBOARD CARD (Compact Size) 🔥
+   ========================================= */
+.dashboard-card {
+    grid-column: 1 / -1; 
+    min-height: 180px;   
+    
+    background: var(--bg-card);
+    border: 1px solid #fecaca; border-left: 5px solid #f00c2a; 
+    border-radius: 16px; 
+    padding: 25px 35px;  
+    
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; overflow: hidden;
+    box-shadow: 0 10px 20px -5px rgba(240, 12, 42, 0.1);
+    transition: transform 0.3s ease; 
+}
+
+.dashboard-card:hover { transform: translateY(-3px); }
+
+.dashboard-content { z-index: 2; max-width: 70%; }
+.dashboard-content h2 { font-size: 1.8rem; margin: 0 0 8px 0; color: #f00c2a; font-weight: 800; }
+.dashboard-content p { font-size: 0.95rem; opacity: 0.8; margin: 0; color: var(--text-sub); }
+
+.dashboard-btn {
+    margin-top: 20px; padding: 8px 20px;
+    background: #f00c2a; border-radius: 50px;
+    color: white; font-weight: 600; font-size: 0.9rem;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: 0.2s; box-shadow: 0 4px 8px rgba(240, 12, 42, 0.25);
+}
+.dashboard-btn:hover { background: #dc0a24; transform: scale(1.05); }
+
+.dashboard-icon {
+    font-size: 7rem; color: #f00c2a; opacity: 0.08;
+    transform: rotate(-10deg); position: absolute; 
+    right: 30px; bottom: -20px; transition: 0.3s;
+}
+.dashboard-card:hover .dashboard-icon { transform: rotate(0deg) scale(1.1); opacity: 0.15; }
+
+/* =========================================
+   🔥 6. MODULE CARDS (Square Compact) 🔥
+   ========================================= */
+.module-card {
+    aspect-ratio: 1 / 1; 
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-top: 4px solid currentColor; border-radius: 16px; padding: 15px;
+    
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+    
+    position: relative; overflow: hidden;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.module-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1);
+    border-top-width: 6px;
+}
+
+.mod-icon {
+    width: 55px; height: 55px; border-radius: 50%; 
+    margin-bottom: 15px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+    position: static !important; opacity: 1 !important; transform: none !important;
+}
+
+.mod-info h3 { margin: 0 0 4px 0; font-size: 1rem; font-weight: 700; color: var(--text-main); }
+.mod-info p { margin: 0; color: var(--text-sub); font-size: 0.75rem; opacity: 0.8; }
+
+/* =========================================
+   🔥 7. SCROLLBAR & OTHERS 🔥
+   ========================================= */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-body); }
+::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; border: 2px solid var(--bg-body); }
+::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background-color: #333333; border-color: var(--bg-body); }
+[data-theme="dark"] ::-webkit-scrollbar-track { background: var(--bg-body); }
+
+@media(max-width: 900px) { .grid-layout { grid-template-columns: repeat(2, 1fr); } }
+@media(max-width: 600px) { 
+    .grid-layout { grid-template-columns: 1fr; } 
+    .dashboard-card { flex-direction: column; text-align: center; padding: 20px; min-height: auto; }
+    .dashboard-icon { position: static; margin-bottom: 15px; font-size: 4rem; }
+    .module-card { aspect-ratio: auto; min-height: 100px; flex-direction: row; justify-content: flex-start; text-align: left; gap: 15px; padding: 15px 20px; }
+    .mod-icon { margin-bottom: 0; width: 45px; height: 45px; font-size: 1.4rem; }
+}
+
+.welcome-sec { margin-bottom: 20px; text-align: center; }
+.welcome-sec h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 5px; }
+.welcome-sec span { color: var(--primary); }
+.welcome-sec p { color: var(--text-sub); font-size: 0.95rem; }
+.config-btn {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; padding: 5px 14px;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 50px;
+    color: var(--text-main); font-weight: 500; transition: 0.2s; font-size: 0.8rem;
+    text-decoration: none !important;
+}
+.config-btn:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }

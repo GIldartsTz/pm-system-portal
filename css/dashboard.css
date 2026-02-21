@@ -1,0 +1,182 @@
+/* PM/css/dashboard.css */
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.page-header h1 {
+    font-weight: 800;
+    color: var(--text-main);
+    font-size: 1.75rem;
+    margin: 0;
+}
+
+/* Content Area */
+.content {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* Filter Bar */
+.filter-bar {
+    display: flex;
+    gap: 10px;
+    background: var(--bg-card);
+    padding: 5px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-body);
+    color: var(--text-main);
+    cursor: pointer;
+    font-weight: 600;
+    outline: none;
+    min-width: 150px;
+}
+
+/* Grid Layout for Dashboard Cards */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+    gap: 25px;
+    padding-bottom: 40px;
+}
+
+/* Card Style */
+.card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: 0.3s;
+}
+
+.card.hidden {
+    display: none;
+}
+
+.card-header {
+    padding: 15px 20px;
+    background: var(--hover);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tag-period {
+    background: var(--primary);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.card-body {
+    padding: 0;
+    overflow-x: auto;
+}
+
+/* Mini Table inside Card */
+.mini-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.mini-table th,
+.mini-table td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+
+.mini-table th {
+    background: var(--bg-body);
+    color: var(--text-sub);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.mini-table td:first-child {
+    text-align: left;
+    padding-left: 20px;
+    font-weight: 600;
+    color: var(--text-main);
+    width: 120px;
+}
+
+/* Progress Bar */
+.progress-cell {
+    position: relative;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-bar {
+    position: absolute;
+    bottom: 4px;
+    left: 10%;
+    width: 80%;
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 2px;
+}
+
+.val-text {
+    z-index: 1;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+/* Responsive */
+@media(max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-bar {
+        flex-direction: column;
+        width: 100%;
+    }
+}
+
