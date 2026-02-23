@@ -1,0 +1,117 @@
+      /* ขยาย Container ให้กว้างขึ้นเพื่อรองรับหน้าจอ Wide */
+        .container {
+            width: 95% !important;
+            max-width: 1600px !important; /* ปรับให้ยาวขึ้นตามต้องการ */
+            margin: 0 auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        /* จัดการ Card ให้ยาวเต็มพื้นที่ */
+        .custom-card {
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 35px; /* เพิ่ม padding ให้ดูโปร่ง */
+            box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+            box-sizing: border-box;
+            margin-top: 10px;
+        }
+
+        /* โซนอัปโหลดเอกสารแบบยาว */
+        .upload-zone {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            background: var(--bg-body);
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px dashed var(--border);
+            margin-bottom: 30px;
+            align-items: flex-end;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-sub);
+        }
+
+        .input-group input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: white;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .btn-upload {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 35px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-upload:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* ตารางรองรับจอใหญ่ */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .file-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .file-table th {
+            background: var(--bg-body);
+            color: var(--text-sub);
+            text-align: left;
+            padding: 18px 20px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .file-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .file-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-link:hover { text-decoration: underline; }
+
+        .badge-type {
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+    

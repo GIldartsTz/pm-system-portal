@@ -1,4 +1,4 @@
-// manage_config.js - ฉบับสมบูรณ์ (Filter + Theme)
+// manage_config.js - ฉบับสมบูรณ์ (Filter + Theme + Page Edit)
 
 // 1. ฟังก์ชันกรองตาราง (Filter Table)
 function filterTable(tableId, filterValue) {
@@ -63,7 +63,63 @@ function filterTable(tableId, filterValue) {
     }
 }
 
-// 2. Theme Switcher (เปลี่ยนธีม Dark/Light)
+// 2. ฟังก์ชันจัดการหน้าอิสระ (Edit/Cancel Page)
+window.editPage = function(id, name) {
+    // ดึง Element ฟอร์มจัดการหน้า
+    const pageIdInput = document.getElementById('page_id');
+    const pageNameInput = document.getElementById('page_name');
+    const btnSubmit = document.getElementById('btnPageSubmit');
+    const btnCancel = document.getElementById('btnCancelEdit');
+
+    if (pageIdInput && pageNameInput) {
+        // ใส่ข้อมูลลงในฟอร์ม
+        pageIdInput.value = id;
+        pageNameInput.value = name;
+        
+        // เปลี่ยนหน้าตาปุ่มเป็นโหมดแก้ไข
+        if (btnSubmit) {
+            btnSubmit.innerHTML = '<i class="fa-solid fa-save"></i> บันทึกการแก้ไข';
+            btnSubmit.style.background = '#f59e0b'; // สีส้ม (Warning/Edit)
+        }
+        
+        // แสดงปุ่มยกเลิก
+        if (btnCancel) {
+            btnCancel.style.display = 'inline-block';
+        }
+
+        // เลื่อนหน้าจอขึ้นไปที่ฟอร์ม
+        const form = document.getElementById('customPageForm');
+        if (form) {
+            window.scrollTo({ top: form.offsetTop - 100, behavior: 'smooth' });
+        }
+    }
+};
+
+window.cancelEditPage = function() {
+    const pageIdInput = document.getElementById('page_id');
+    const pageNameInput = document.getElementById('page_name');
+    const btnSubmit = document.getElementById('btnPageSubmit');
+    const btnCancel = document.getElementById('btnCancelEdit');
+
+    if (pageIdInput && pageNameInput) {
+        // ล้างค่าฟอร์ม
+        pageIdInput.value = '0';
+        pageNameInput.value = '';
+        
+        // คืนค่าปุ่มเป็นโหมดสร้างใหม่
+        if (btnSubmit) {
+            btnSubmit.innerHTML = '<i class="fa-solid fa-plus"></i> สร้างหน้า';
+            btnSubmit.style.background = '#10b981'; // สีเขียวเดิม
+        }
+        
+        // ซ่อนปุ่มยกเลิก
+        if (btnCancel) {
+            btnCancel.style.display = 'none';
+        }
+    }
+};
+
+// 3. Theme Switcher (เปลี่ยนธีม Dark/Light)
 document.addEventListener('DOMContentLoaded', () => {
     const root = document.documentElement;
     const themeIcon = document.getElementById('themeIcon');
