@@ -75,7 +75,7 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
 
                 <form method="POST" enctype="multipart/form-data" class="upload-zone">
                     <div class="input-group" style="flex: 1; min-width: 200px;">
-                        <label><i class="fa-regular fa-calendar"></i> วันที่เอกสาร (ระบุเอง)</label>
+                        <label><i class="fa-regular fa-calendar"></i> วันที่ลงข้อมูล (ระบุเอง)</label>
                         <input type="date" name="report_date" value="<?=date('Y-m-d')?>" required>
                     </div>
                     <div class="input-group" style="flex: 4; min-width: 350px;">
@@ -91,7 +91,7 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
                     <table class="file-table">
                         <thead>
                             <tr>
-                                <th width="15%">วันที่เอกสาร</th>
+                                <th width="15%">วันที่ลงข้อมูล</th>
                                 <th>ชื่อไฟล์เอกสาร</th>
                                 <th width="10%">ประเภท</th>
                                 <th width="10%" style="text-align:center">จัดการ</th>
@@ -137,5 +137,6 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
         </div>
     </div>
     <script src="js/manage_config.js"></script>
+    
 </body>
 </html>
