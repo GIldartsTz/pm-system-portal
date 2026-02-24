@@ -15,8 +15,14 @@ if (isset($_POST['upload'])) {
     $date = $_POST['report_date']; 
     if (!empty($_FILES['file_upload']['name'])) {
         $file = $_FILES['file_upload'];
+        
+        // 1. แยกชื่อไฟล์เดิมและนามสกุล
+        $filename_original = pathinfo($file['name'], PATHINFO_FILENAME);
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        $new_name = "doc_" . time() . "_" . rand(10,99) . "." . $ext;
+        
+        // 2. ตั้งชื่อใหม่: [ชื่อเดิม]_[เวลา].[นามสกุล] 
+        // เช่น รายงาน_1712345678.pdf (กันไฟล์ชื่อเดียวกันทับกัน)
+        $new_name = $filename_original . "_" . time() . "." . $ext;
         
         if (!is_dir('uploads')) { mkdir('uploads', 0777, true); }
         if (move_uploaded_file($file['tmp_name'], "uploads/" . $new_name)) {
@@ -101,13 +107,23 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
                             <?php while($f = $files->fetch_assoc()): 
                                 $file_ext = $f['file_type'];
                                 $icon_class = ($file_ext == 'pdf') ? 'fa-file-pdf' : 'fa-file-image';
+                                
+                                // --- ส่วนจัดการการแสดงผลชื่อไฟล์เดิม ---
+                                $full_filename = $f['file_path'];
+                                // ค้นหาตำแหน่ง _ ตัวสุดท้ายเพื่อตัด Timestamp ออกตอนโชว์
+                                $last_underscore = strrpos($full_filename, '_');
+                                if ($last_underscore !== false) {
+                                    $display_name = substr($full_filename, 0, $last_underscore) . "." . $file_ext;
+                                } else {
+                                    $display_name = $full_filename;
+                                }
                             ?>
                             <tr>
                                 <td><span style="font-weight:600; color:var(--text-main);"><?=date('d/m/Y', strtotime($f['report_date']))?></span></td>
                                 <td>
                                     <a href="uploads/<?=$f['file_path']?>" target="_blank" class="file-link">
                                         <i class="fa-solid <?=$icon_class?>" style="font-size:1.2rem; opacity:0.8;"></i>
-                                        <?=htmlspecialchars($f['file_path'])?>
+                                        <?=htmlspecialchars($display_name)?>
                                     </a>
                                 </td>
                                 <td><span class="badge-type"><?=strtoupper($file_ext)?></span></td>
@@ -137,6 +153,5 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
         </div>
     </div>
     <script src="js/manage_config.js"></script>
-    
 </body>
 </html>
