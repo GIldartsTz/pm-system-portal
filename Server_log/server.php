@@ -14,7 +14,7 @@ $path = '../';
 include '../db.php'; 
 // Config
 $TABLE_NAME = 'server_logs'; 
-$PAGE_TITLE = 'Server Check'; 
+$PAGE_TITLE = 'Server Logs'; 
 $ICON_CLASS = 'fa-server'; 
 $THEME = '#10b981';
 
@@ -50,7 +50,7 @@ $r_time = $q_time->fetch_assoc(); $global_last_update = $r_time['latest'] ? date
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Portal - PM System</title>
+    <title>Server Logs</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     

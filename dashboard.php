@@ -45,7 +45,7 @@ $systems = [];
 
 // --- 1. BACKUP (Strict Task Count: Plan 2) ---
 $systems['backup'] = [
-    'label' => 'Backup Server', 'table' => 'backup_logs',
+    'label' => 'Backup Logs', 'table' => 'backup_logs',
     'freqs' => [
         'D' => ['label'=>'Daily (D)', 'type'=>'days', 'plan_mode'=>'calc_daily_dynamic', 'cols'=>[]]
     ]
@@ -58,7 +58,7 @@ if (isset($dynamic_tasks['backup']['6M'])) {
 
 // --- 2. SERVER (Count All Checks) ---
 if (isset($dynamic_tasks['server'])) {
-    $systems['server'] = ['label' => 'Server & Data Center', 'table' => 'server_logs', 'freqs' => []];
+    $systems['server'] = ['label' => 'Server Logs', 'table' => 'server_logs', 'freqs' => []];
     foreach ($dynamic_tasks['server'] as $freq => $cols) {
         $label = ($freq=='M')?'Monthly (M)':(($freq=='3M')?'Quarterly (3M)':(($freq=='6M')?'Semiannual (6M)':'Annual (Y)'));
         $due = ($freq=='M')?range(1,12):(($freq=='3M')?[3,6,9,12]:(($freq=='6M')?[6,12]:[12]));
@@ -68,7 +68,7 @@ if (isset($dynamic_tasks['server'])) {
 
 // --- 3. NETWORK (Count All Checks) ---
 if (isset($dynamic_tasks['network'])) {
-    $systems['network'] = ['label' => 'Network Maintenance', 'table' => 'network_logs', 'freqs' => []];
+    $systems['network'] = ['label' => 'Network Logs', 'table' => 'network_logs', 'freqs' => []];
     foreach ($dynamic_tasks['network'] as $freq => $cols) {
         $label = ($freq=='M')?'Monthly (M)':(($freq=='3M')?'Quarterly (3M)':(($freq=='6M')?'Semiannual (6M)':'Annual (Y)'));
         $due = ($freq=='M')?range(1,12):(($freq=='3M')?[3,6,9,12]:(($freq=='6M')?[6,12]:[12]));
@@ -78,7 +78,7 @@ if (isset($dynamic_tasks['network'])) {
 
 // --- 4. SOFTWARE MAINTENANCE ---
 if (isset($dynamic_tasks['software'])) {
-    $systems['software'] = ['label' => 'Software Maintenance', 'table' => 'hardsoft_logs', 'freqs' => []];
+    $systems['software'] = ['label' => 'Software Logs', 'table' => 'hardsoft_logs', 'freqs' => []];
     foreach ($dynamic_tasks['software'] as $freq => $cols) {
         $label = ($freq=='M')?'Monthly (M)':(($freq=='3M')?'Quarterly (3M)':(($freq=='6M')?'Semiannual (6M)':'Annual (Y)'));
         $due = ($freq=='M')?range(1,12):(($freq=='3M')?[3,6,9,12]:(($freq=='6M')?[6,12]:[12]));
@@ -88,7 +88,7 @@ if (isset($dynamic_tasks['software'])) {
 
 // --- 5. HARDWARE MAINTENANCE ---
 if (isset($dynamic_tasks['hardware'])) {
-    $systems['hardware'] = ['label' => 'Hardware Maintenance', 'table' => 'hardsoft_logs', 'freqs' => []];
+    $systems['hardware'] = ['label' => 'Hardware Logs', 'table' => 'hardsoft_logs', 'freqs' => []];
     foreach ($dynamic_tasks['hardware'] as $freq => $cols) {
         $label = ($freq=='M')?'Monthly (M)':(($freq=='3M')?'Quarterly (3M)':(($freq=='6M')?'Semiannual (6M)':'Annual (Y)'));
         $due = ($freq=='M')?range(1,12):(($freq=='3M')?[3,6,9,12]:(($freq=='6M')?[6,12]:[12]));

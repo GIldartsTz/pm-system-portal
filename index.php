@@ -29,10 +29,10 @@ $dashboard_module = [
 
 // Sub Modules
 $sub_modules = [
-    ['name' => 'Backup Log', 'link' => 'Backup_log/backup.php', 'icon' => 'fa-database', 'color' => '#3b82f6', 'desc' => 'Daily backup checklist'],
-    ['name' => 'Server Check', 'link' => 'Server_log/server.php', 'icon' => 'fa-server', 'color' => '#10b981', 'desc' => 'Server room maintenance'],
-    ['name' => 'Network', 'link' => 'Network_log/network.php', 'icon' => 'fa-network-wired', 'color' => '#f59e0b', 'desc' => 'Network status & devices'],
-    ['name' => 'H/W & S/W', 'link' => 'HardSoft_log/hardsoft.php', 'icon' => 'fa-microchip', 'color' => '#8b5cf6', 'desc' => 'H/W & S/W maintenance']
+    ['name' => 'Backup Logs', 'link' => 'Backup_log/backup.php', 'icon' => 'fa-database', 'color' => '#3b82f6', 'desc' => 'Daily backup checklist'],
+    ['name' => 'Server Logs', 'link' => 'Server_log/server.php', 'icon' => 'fa-server', 'color' => '#10b981', 'desc' => 'Server maintenance'],
+    ['name' => 'Network Logs', 'link' => 'Network_log/network.php', 'icon' => 'fa-network-wired', 'color' => '#f59e0b', 'desc' => 'Network status & devices'],
+    ['name' => 'Hardware/Software', 'link' => 'HardSoft_log/hardsoft.php', 'icon' => 'fa-microchip', 'color' => '#8b5cf6', 'desc' => 'H/W & S/W maintenance']
 ];
 ?>
 <!DOCTYPE html>

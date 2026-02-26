@@ -47,16 +47,16 @@ if(!isset($conn)) {
         
         <div class="nav-title">ICT STAFF</div>
         <a href="<?=$p?>Backup_log/backup.php" class="nav-link <?=($current_page=='backup')?'active':''?>">
-            <i class="fa-solid fa-database"></i> <span>Backup Log</span>
+            <i class="fa-solid fa-database"></i> <span>Backup Logs</span>
         </a>
         <a href="<?=$p?>Server_log/server.php" class="nav-link <?=($current_page=='server')?'active':''?>">
-            <i class="fa-solid fa-server"></i> <span>Server Check</span>
+            <i class="fa-solid fa-server"></i> <span>Server Logs</span>
         </a>
         <a href="<?=$p?>Network_log/network.php" class="nav-link <?=($current_page=='network')?'active':''?>">
-            <i class="fa-solid fa-network-wired"></i> <span>Network</span>
+            <i class="fa-solid fa-network-wired"></i> <span>Network Logs</span>
         </a>
         <a href="<?=$p?>HardSoft_log/hardsoft.php" class="nav-link <?=($current_page=='hardsoft')?'active':''?>">
-            <i class="fa-solid fa-microchip"></i> <span>H/W & S/W</span>
+            <i class="fa-solid fa-microchip"></i> <span>Hardware/Software</span>
         </a>
 
         <div class="nav-title">OTHER</div>

@@ -14,7 +14,7 @@ $path = '../';
 include '../db.php'; 
 // Config
 $TABLE_NAME = 'network_logs'; 
-$PAGE_TITLE = 'Network'; 
+$PAGE_TITLE = 'Network Logs'; 
 $ICON_CLASS = 'fa-network-wired'; 
 $THEME = '#f59e0b';
 

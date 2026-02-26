@@ -182,10 +182,10 @@ $custom_pages = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
                 <form method="POST" class="form-row">
                     <select name="sys_type" id="filter_eq" onchange="filterTable('eq_table', this.value)" required style="flex:0.4">
                         <option value="all">-- แสดงทั้งหมด --</option>
-                        <option value="backup">Backup</option>
-                        <option value="server">Server Check</option>
-                        <option value="network">Network</option>
-                        <option value="hardsoft">H/W & S/W</option>
+                        <option value="backup">Backup Logs</option>
+                        <option value="server">Server Logs</option>
+                        <option value="network">Network Logs</option>
+                        <option value="hardsoft">Hardware & Software</option>
                     </select>
                     <input type="text" name="eq_name" placeholder="ชื่ออุปกรณ์ใหม่..." style="flex:1;" required>
                     <button type="submit" name="add_equip"><i class="fa-solid fa-plus"></i> เพิ่ม</button>
@@ -213,9 +213,9 @@ $custom_pages = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
                 <form method="POST" class="form-row">
                     <select name="sys_type_task" id="filter_task" onchange="filterTable('task_table', this.value)" required style="flex:0.4">
                         <option value="all">-- แสดงทั้งหมด --</option>
-                        <option value="server">Server Check</option>
-                        <option value="network">Network</option>
-                        <option value="hardsoft">H/W & S/W (All)</option>
+                        <option value="server">Server Logs</option>
+                        <option value="network">Network Logs</option>
+                        <option value="hardsoft">Hardware & Software</option>
                         <option value="hardware" style="color:#4f46e5; font-weight:600;">↳ Hardware Only</option>
                         <option value="software" style="color:#9333ea; font-weight:600;">↳ Software Only</option>
                     </select>

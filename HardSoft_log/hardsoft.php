@@ -14,7 +14,7 @@ $path = '../';
 include '../db.php'; 
 // Config
 $TABLE_NAME = 'hardsoft_logs'; 
-$PAGE_TITLE = 'H/W & S/W'; 
+$PAGE_TITLE = 'Hardware/Software'; 
 $ICON_CLASS = 'fa-microchip'; 
 $THEME = '#8b5cf6'; 
 

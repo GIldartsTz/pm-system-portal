@@ -16,7 +16,7 @@ include '../db.php';
 
 // Config
 $TABLE_NAME = 'backup_logs'; 
-$PAGE_TITLE = 'Backup Log'; 
+$PAGE_TITLE = 'Backup Logs'; 
 $THEME = '#3b82f6'; 
 $cur_m = isset($_GET['month'])?(int)$_GET['month']:(int)date('m'); 
 $cur_y = isset($_GET['year'])?(int)$_GET['year']:(int)date('Y');
