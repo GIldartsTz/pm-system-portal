@@ -152,6 +152,6 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
             <div style="height: 40px;"></div>
         </div>
     </div>
-    <script src="js/manage_config.js"></script>
+   
 </body>
 </html>
