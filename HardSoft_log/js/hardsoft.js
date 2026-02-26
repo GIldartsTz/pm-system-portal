@@ -59,7 +59,7 @@ function updateCell(el) {
     // ใช้ตัวแปร Global: APP_CONFIG (ที่ส่งมาจาก PHP)
     // ⚠️ หมายเหตุ: ไฟล์ update.php น่าจะอยู่ในโฟลเดอร์ Backup_log เหมือนเดิม หรือใช้ร่วมกัน?
     // ถ้าใช้ไฟล์ update.php ตัวกลางที่เดิม ให้ใช้ '../Backup_log/update.php'
-    fetch('../Backup_log/update.php', {
+    fetch('../Hardsoft_log/update.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

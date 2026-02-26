@@ -58,7 +58,7 @@ function updateCell(el) {
     // AJAX: ส่งข้อมูลไปบันทึกที่ Database
     // ใช้ตัวแปร Global: APP_CONFIG (ที่ส่งมาจาก PHP)
     // ⚠️ เช็ค path: ไฟล์ update.php อยู่ที่ ../Backup_log/update.php
-    fetch('../Backup_log/update.php', {
+    fetch('../Server_log/update.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
