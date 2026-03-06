@@ -7,18 +7,17 @@ if (isset($_SESSION['last_active']) && (time() - $_SESSION['last_active'] > $tim
 $_SESSION['last_active'] = time();
 if (!isset($_SESSION['user_id'])) { header("Location: ../login/login.php"); exit(); }
 
-// ✅ CONFIG
+
 $current_page = 'hardsoft';
 $path = '../'; 
 
 include '../db.php'; 
-// Config
+
 $TABLE_NAME = 'hardsoft_logs'; 
 $PAGE_TITLE = 'Hardware/Software'; 
 $ICON_CLASS = 'fa-microchip'; 
 $THEME = '#8b5cf6'; 
 
-// --- ส่วนดึงข้อมูลแบบ Grouped Headers (คงเดิมไว้) ---
 $grouped_headers = []; $all_column_keys = [];
 $q_task = $conn->query("SELECT * FROM master_tasks WHERE system_type='hardsoft' ORDER BY id ASC");
 if($q_task && $q_task->num_rows > 0){
@@ -41,10 +40,19 @@ if($master_eq){ while($me = $master_eq->fetch_assoc()){
     if($check->num_rows == 0) $conn->query("INSERT INTO $TABLE_NAME (equipment_name, month, year) VALUES ('$ename', $cur_m, $cur_y)");
 }}
 
-// ✅ เรียง A-Z
+
 $result = $conn->query("SELECT * FROM $TABLE_NAME WHERE month=$cur_m AND year=$cur_y ORDER BY equipment_name ASC"); 
 $grand_total=0; $table_data=[];
-if($res=$result){ while($r=$res->fetch_assoc()){ $table_data[]=$r; foreach($all_column_keys as $k) if(isset($r[$k]) && $r[$k]=='1') $grand_total++; }}
+if($res=$result){ 
+    while($r=$res->fetch_assoc()){ 
+        $table_data[]=$r; 
+        foreach($all_column_keys as $k) {
+            if(isset($r[$k]) && ($r[$k] == '1' || $r[$k] == '0')) {
+                $grand_total++; 
+            }
+        }
+    }
+}
 $q_time = $conn->query("SELECT MAX(last_updated) as latest FROM $TABLE_NAME WHERE month=$cur_m AND year=$cur_y");
 $r_time = $q_time->fetch_assoc(); $global_last_update = $r_time['latest'] ? date('d M Y, H:i', strtotime($r_time['latest'])) : '-';
 ?>
@@ -67,7 +75,7 @@ $r_time = $q_time->fetch_assoc(); $global_last_update = $r_time['latest'] ? date
         <div class="controls-bar">
             <div class="page-head"><h1><?=$PAGE_TITLE?></h1><small>Updated: <span id="lastUpd"><?=$global_last_update?></span></small></div>
             <div class="filters">
-                <div class="stat-box"><span class="lbl">Total</span><span class="val" style="color:var(--primary)" id="grandTotal"><?=number_format($grand_total)?></span></div>
+                <div class="stat-box" style="display: none;"><span class="lbl">Total</span><span class="val" style="color:var(--primary)" id="grandTotal"><?=number_format($grand_total)?></span></div>
                 <form method="GET" class="picker"><i class="fa-regular fa-calendar" style="color:var(--text-sub)"></i><select name="month" onchange="this.form.submit()"><?php foreach($month_names as $n=>$m) echo "<option value='$n' ".($n==$cur_m?'selected':'').">$m</option>"; ?></select><select name="year" onchange="this.form.submit()"><?php foreach($years as $y) echo "<option value='$y' ".($y==$cur_y?'selected':'').">$y</option>"; ?></select></form>
                 <div class="actions">
                     <button class="active-view" onclick="setTool('safe',this)"><i class="fa-solid fa-arrow-pointer"></i></button>
@@ -105,8 +113,13 @@ $r_time = $q_time->fetch_assoc(); $global_last_update = $r_time['latest'] ? date
                         </thead>
                         <tbody>
                             <?php if(!empty($table_data)): foreach($table_data as $row): 
-                                $name=$row['equipment_name']; $sum=0; 
-                                foreach($all_column_keys as $col) if(isset($row[$col]) && $row[$col]=='1') $sum++; 
+                                $name=$row['equipment_name']; 
+                                $sum=0; 
+                                foreach($all_column_keys as $col) {
+                                    if(isset($row[$col]) && ($row[$col] == '1' || $row[$col] == '0')) {
+                                        $sum++;
+                                    }
+                                }
                             ?>
                             <tr>
                                 <td class="sticky-col"><?=$name?></td>
