@@ -1,15 +1,11 @@
-/* PM/css/config.css */
 
-/* =========================================
-   🔥 1. HEADER STYLES (ส่วนหัว: ปรับให้ลอยเด่น) 🔥
-   ========================================= */
 .header {
     position: fixed; top: 0; left: 0; right: 0; height: 64px;
     background: var(--bg-card); display: flex; align-items: center;
     justify-content: space-between; padding: 0 30px;
     border-bottom: 1px solid var(--border);
     
-    /* 🔥 เพิ่ม Layer ให้สูงขึ้นและใส่เงาให้ดูลอย */
+    
     z-index: 999; 
     box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1); 
 }
@@ -46,29 +42,24 @@
     .header { padding: 0 15px; }
 }
 
-/* =========================================
-   🔥 2. MAIN LAYOUT (Scroll bar เริ่มใต้ Navbar) 🔥
-   ========================================= */
-
-/* 1. ล็อค Body ไม่ให้มี Scroll bar ยาวๆ ทะลุขึ้นข้างบน */
 body {
     overflow: hidden !important; 
 }
 
-/* 2. สร้างพื้นที่เลื่อนเฉพาะส่วนเนื้อหา (Scroll bar จะเริ่มที่ 64px) */
+
 .main { 
     margin-top: 64px; 
     
-    /* ล้างค่าจาก Layout เดิม */
+   
     margin-left: 0 !important; 
     width: 100% !important;
 
-    /* 🔥 บังคับความสูงให้พอดีพื้นที่ที่เหลือ และเปิด Scroll bar ภายใน */
+    
     height: calc(100vh - 64px) !important; 
     overflow-y: auto !important; 
     
     padding: 30px 20px; 
-    padding-bottom: 80px; /* กันตก */
+    padding-bottom: 80px; 
 }
 
 .container { 
@@ -76,10 +67,6 @@ body {
     margin: 0 auto; 
 }
 
-/* =========================================
-   🔥 3. SCROLLBAR STYLES (แต่งสวย) 🔥
-   ========================================= */
-/* Scrollbar นี้จะไปเกาะอยู่ที่ .main แทน body ทำให้ไม่ทับ Header */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--bg-body); }
 
@@ -93,9 +80,7 @@ body {
 [data-theme="dark"] ::-webkit-scrollbar-thumb { background-color: #333333; border-color: var(--bg-body); }
 [data-theme="dark"] ::-webkit-scrollbar-track { background: var(--bg-body); }
 
-/* =========================================
-   🔥 4. COMPONENTS (ส่วนประกอบอื่นๆ คงเดิม) 🔥
-   ========================================= */
+
 .card {
     background: var(--bg-card); border-radius: 16px; padding: 25px;
     border: 1px solid var(--border); box-shadow: none; margin-bottom: 30px;

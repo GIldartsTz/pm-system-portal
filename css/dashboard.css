@@ -1,6 +1,4 @@
-/* PM/css/dashboard.css */
 
-/* Page Header */
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -17,7 +15,7 @@
     margin: 0;
 }
 
-/* Content Area */
+
 .content {
     padding: 30px;
     display: flex;
@@ -27,7 +25,7 @@
     overflow-y: auto;
 }
 
-/* Filter Bar */
+
 .filter-bar {
     display: flex;
     gap: 10px;
@@ -49,7 +47,7 @@
     min-width: 150px;
 }
 
-/* Grid Layout for Dashboard Cards */
+
 .grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
@@ -57,7 +55,7 @@
     padding-bottom: 40px;
 }
 
-/* Card Style */
+
 .card {
     background: var(--bg-card);
     border-radius: 16px;
@@ -106,7 +104,7 @@
     overflow-x: auto;
 }
 
-/* Mini Table inside Card */
+
 .mini-table {
     width: 100%;
     border-collapse: collapse;
@@ -137,7 +135,7 @@
     width: 120px;
 }
 
-/* Progress Bar */
+
 .progress-cell {
     position: relative;
     height: 30px;
@@ -168,7 +166,7 @@
     font-size: 0.85rem;
 }
 
-/* Responsive */
+
 @media(max-width: 768px) {
     .grid-container {
         grid-template-columns: 1fr;

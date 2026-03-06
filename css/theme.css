@@ -1,10 +1,7 @@
-/* PM/css/theme.css */
 
-/* นำเข้าฟอนต์ */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap');
 
 :root {
-    /* --- Light Mode Colors --- */
     --primary: #4f46e5;       
     --primary-light: #e0e7ff; 
     --primary-soft: #4f46e520; 
@@ -21,13 +18,10 @@
     --th-text: #374151;
     --input-bg: #ffffff;
 
-    /* 🔥 เพิ่มตัวแปรสีสำหรับ Hover แถว (Light Mode) 🔥 */
-    /* ปรับให้เข้มขึ้นและชัดเจนขึ้น เหมือนสไตล์ Dark Mode */
-    --row-hover-bg: #c7d2fe;  /* สีพื้นหลังตอนชี้ (Indigo-200) */
-    --row-hover-text: #1e1b4b; /* สีตัวหนังสือตอนชี้ (Indigo-950 เข้มๆ) */
+    --row-hover-bg: #c7d2fe;  
+    --row-hover-text: #1e1b4b; 
 }
 
-/* --- Dark Mode Colors --- */
 [data-theme="dark"] {
     --primary: #6366f1;       
     --primary-light: #312e81; 
@@ -45,12 +39,10 @@
     --th-text: #e5e7eb;
     --input-bg: #0f0f0f;
 
-    /* 🔥 เพิ่มตัวแปรสีสำหรับ Hover แถว (Dark Mode) 🔥 */
-    --row-hover-bg: #312e81;  /* สีพื้นหลังตอนชี้ (Indigo-900) */
-    --row-hover-text: #e0e7ff; /* สีตัวหนังสือตอนชี้ (Indigo-100 สว่างๆ) */
+    --row-hover-bg: #312e81;  
+    --row-hover-text: #e0e7ff; 
 }
 
-/* Reset พื้นฐาน */
 body {
     font-family: 'Inter', 'Prompt', sans-serif;
     background-color: var(--bg-body);
