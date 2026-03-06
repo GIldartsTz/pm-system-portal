@@ -1,17 +1,17 @@
 <?php
 session_start();
 
-// --- Session Timeout (ตัดการเชื่อมต่อถ้าไม่ขยับเมาส์ 1 ชม.) ---
+
 $timeout = 60 * 60; 
 if (isset($_SESSION['last_active']) && (time() - $_SESSION['last_active'] > $timeout)) {
     session_unset(); session_destroy(); header("Location: login/login.php?timeout=1"); exit();
 }
 $_SESSION['last_active'] = time();
 
-// --- ตรวจสอบว่า Login หรือยัง ---
+
 if (!isset($_SESSION['user_id'])) { header("Location: login/login.php"); exit(); }
 
-// --- 🔥 ระบบป้องกัน: เฉพาะ Admin เท่านั้นที่เข้าได้ 🔥 ---
+
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     echo "<script>
         alert('Access Denied: คุณไม่มีสิทธิ์เข้าถึงหน้านี้ (Admin Only)');
@@ -20,20 +20,18 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// --- เชื่อมต่อฐานข้อมูล ---
+
 include 'db.php'; 
 
-// 🔥 AUTO FIX DATA (โค้ดช่วยแก้หมวดหมู่ให้อัตโนมัติ) 🔥
+
 $conn->query("UPDATE master_tasks SET category='hardware' WHERE system_type='hardsoft' AND (category IS NULL OR category='') AND (task_label LIKE '%battery%' OR task_label LIKE '%hardware%' OR task_label LIKE '%disk%' OR task_label LIKE '%temp%' OR task_label LIKE '%firmware%' OR task_label LIKE '%Clean dust%' OR task_label LIKE '%Check cables%')");
 $conn->query("UPDATE master_tasks SET category='software' WHERE system_type='hardsoft' AND (category IS NULL OR category='') AND (task_label LIKE '%app%' OR task_label LIKE '%Window%')");
 
 $msg = ""; $error = "";
 
-// ---------------------------------------------------------
-// ส่วนจัดการข้อมูล (Logic การเพิ่ม/แก้ไข/ลบ)
-// ---------------------------------------------------------
 
-// --- 1. จัดการอุปกรณ์ (Equipment) ---
+
+// จัดการอุปกรณ์
 if (isset($_POST['add_equip'])) {
     $sys = $_POST['sys_type'];
     $name = trim(mysqli_real_escape_string($conn, $_POST['eq_name']));
@@ -60,7 +58,7 @@ if (isset($_GET['del_eq'])) {
     }
 }
 
-// --- 2. จัดการหัวข้อตรวจ (Tasks) ---
+// จัดการหัวข้อตรวจ 
 if (isset($_POST['add_task'])) {
     $sys_input = $_POST['sys_type_task']; 
     $label = mysqli_real_escape_string($conn, $_POST['task_label']);
@@ -109,7 +107,7 @@ if (isset($_GET['del_task'])) {
     }
 }
 
-// --- 🔥 3. จัดการหน้าอิสระ (Custom Pages) - เพิ่มและแก้ไข 🔥 ---
+// จัดการหน้าอิสระ 
 if (isset($_POST['save_custom_page'])) {
     $p_name = trim(mysqli_real_escape_string($conn, $_POST['page_name']));
     $p_id = isset($_POST['page_id']) ? intval($_POST['page_id']) : 0;
@@ -185,7 +183,7 @@ $custom_pages = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
                         <option value="backup">Backup Logs</option>
                         <option value="server">Server Logs</option>
                         <option value="network">Network Logs</option>
-                        <option value="hardsoft">Hardware & Software</option>
+                        <option value="hardsoft">Hardware/Software</option>
                     </select>
                     <input type="text" name="eq_name" placeholder="ชื่ออุปกรณ์ใหม่..." style="flex:1;" required>
                     <button type="submit" name="add_equip"><i class="fa-solid fa-plus"></i> เพิ่ม</button>
@@ -215,7 +213,7 @@ $custom_pages = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
                         <option value="all">-- แสดงทั้งหมด --</option>
                         <option value="server">Server Logs</option>
                         <option value="network">Network Logs</option>
-                        <option value="hardsoft">Hardware & Software</option>
+                        <option value="hardsoft">Hardware/Software</option>
                         <option value="hardware" style="color:#4f46e5; font-weight:600;">↳ Hardware Only</option>
                         <option value="software" style="color:#9333ea; font-weight:600;">↳ Software Only</option>
                     </select>

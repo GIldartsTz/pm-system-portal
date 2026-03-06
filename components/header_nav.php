@@ -1,11 +1,11 @@
 <?php
-// รับค่า path จากหน้าที่เรียกใช้ (ถ้าไม่มีให้เป็นค่าว่าง)
+
 $p = isset($path) ? $path : '../'; 
 
-// ป้องกัน Error หากหน้าใดไม่ได้ประกาศตัวแปร $current_page
+
 $current_page = isset($current_page) ? $current_page : '';
 
-// เชื่อมต่อฐานข้อมูลเพื่อดึงรายการหน้าใหม่
+
 if(!isset($conn)) {
     include_once 'db.php';
 }
@@ -67,7 +67,6 @@ if(!isset($conn)) {
         $is_on_custom_view = (basename($_SERVER['PHP_SELF']) == 'custom_page_view.php');
         
         while($np = $nav_pages->fetch_assoc()):
-            // เช็ค active ให้แม่นยำขึ้น โดยดูทั้งชื่อไฟล์และ ID
             $is_active = ($is_on_custom_view && isset($_GET['id']) && $_GET['id'] == $np['id']) ? 'active' : '';
         ?>
         <a href="<?=$p?>custom_page_view.php?id=<?=$np['id']?>" class="nav-link <?=$is_active?>">
@@ -85,7 +84,6 @@ if(!isset($conn)) {
 </nav>
 
 <script>
-    // Theme Toggle
     const root = document.documentElement; 
     if(localStorage.getItem('theme') === 'dark') root.setAttribute('data-theme', 'dark');
     

@@ -7,12 +7,12 @@ if (isset($_SESSION['last_active']) && (time() - $_SESSION['last_active'] > $tim
 $_SESSION['last_active'] = time();
 if (!isset($_SESSION['user_id'])) { header("Location: ../login/login.php"); exit(); }
 
-// ✅ CONFIG
+
 $current_page = 'server';
 $path = '../'; 
 
 include '../db.php'; 
-// Config
+
 $TABLE_NAME = 'server_logs'; 
 $PAGE_TITLE = 'Server Logs'; 
 $ICON_CLASS = 'fa-server'; 
@@ -37,7 +37,6 @@ if($master_eq){ while($me = $master_eq->fetch_assoc()){
     if($check->num_rows == 0) $conn->query("INSERT INTO $TABLE_NAME (equipment_name, month, year) VALUES ('$ename', $cur_m, $cur_y)");
 }}
 
-// 🔥🔥🔥 แก้ตรงนี้ครับ: เพิ่ม ORDER BY id ASC ให้เรียงตามลำดับที่ Insert 🔥🔥🔥
 $result = $conn->query("SELECT * FROM $TABLE_NAME WHERE month=$cur_m AND year=$cur_y ORDER BY id ASC"); 
 
 $grand_total=0; $table_data=[];

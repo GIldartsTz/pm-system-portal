@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// --- 1. Session Timeout (1 Hour) ---
+
 $timeout = 60 * 60; 
 if (isset($_SESSION['last_active']) && (time() - $_SESSION['last_active'] > $timeout)) {
     session_unset(); session_destroy(); header("Location: login/login.php?timeout=1"); exit();
@@ -12,18 +12,17 @@ if (!isset($_SESSION['user_id'])) { header("Location: login/login.php"); exit();
 
 include 'db.php'; 
 
-// 🔥 [ใหม่] บันทึกเวลาใช้งานล่าสุด (Last Login / Last Active) ลง Database 🔥
-// ใส่ตรงนี้จะช่วยให้เวลาอัปเดตทุกครั้งที่เข้าหน้า Dashboard (ดูเป็น Real-time มากขึ้น)
+
 $u_id_update = $_SESSION['user_id'];
 $conn->query("UPDATE users SET last_login = NOW() WHERE id = '$u_id_update'");
-// -------------------------------------------------------------
 
-// Dashboard Highlight (สีแดง #f00c2a)
+
+
 $dashboard_module = [
     'name' => 'Dashboard Overview', 
     'link' => 'dashboard.php', 
     'icon' => 'fa-chart-pie', 
-    'color' => '#f00c2a', // สีแดงตามขอ
+    'color' => '#f00c2a', 
     'desc' => 'View overall statistics'
 ];
 

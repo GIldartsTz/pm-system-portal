@@ -7,12 +7,12 @@ if (isset($_SESSION['last_active']) && (time() - $_SESSION['last_active'] > $tim
 $_SESSION['last_active'] = time();
 if (!isset($_SESSION['user_id'])) { header("Location: ../login/login.php"); exit(); }
 
-// ✅ CONFIG
+
 $current_page = 'network';
 $path = '../';
 
 include '../db.php'; 
-// Config
+
 $TABLE_NAME = 'network_logs'; 
 $PAGE_TITLE = 'Network Logs'; 
 $ICON_CLASS = 'fa-network-wired'; 
@@ -36,7 +36,7 @@ if($master_eq){ while($me = $master_eq->fetch_assoc()){
     if($check->num_rows == 0) $conn->query("INSERT INTO $TABLE_NAME (equipment_name, month, year) VALUES ('$ename', $cur_m, $cur_y)");
 }}
 
-// ✅ เรียง A-Z
+
 $result = $conn->query("SELECT * FROM $TABLE_NAME WHERE month=$cur_m AND year=$cur_y ORDER BY equipment_name ASC"); 
 $grand_total=0; $table_data=[];
 if($res=$result){ while($r=$res->fetch_assoc()){ $table_data[]=$r; foreach($task_headers as $k=>$v) if(isset($r[$k])&&$r[$k]=='1') $grand_total++; }}

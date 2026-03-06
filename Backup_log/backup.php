@@ -7,14 +7,14 @@ if (isset($_SESSION['last_active']) && (time() - $_SESSION['last_active'] > $tim
 $_SESSION['last_active'] = time();
 if (!isset($_SESSION['user_id'])) { header("Location: ../login/login.php"); exit(); }
 
-// ✅ CONFIG
-$current_page = 'backup';
-$path = '../'; // 🔥 ต้องมี ../ เพราะอยู่ในโฟลเดอร์ย่อย Backup_log
 
-// 🔥 แก้ Path: ถอยหลัง 1 ขั้นไปหา db.php
+$current_page = 'backup';
+$path = '../'; 
+
+
 include '../db.php'; 
 
-// Config
+
 $TABLE_NAME = 'backup_logs'; 
 $PAGE_TITLE = 'Backup Logs'; 
 $THEME = '#3b82f6'; 
@@ -24,7 +24,7 @@ $years = range(2026, 2030);
 $month_names = [1=>"Jan", 2=>"Feb", 3=>"Mar", 4=>"Apr", 5=>"May", 6=>"June", 7=>"Jul", 8=>"Aug", 9=>"Sep", 10=>"Oct", 11=>"Nov", 12=>"Dec"];
 $days_in_month = cal_days_in_month(CAL_GREGORIAN, $cur_m, $cur_y); 
 
-// --- Holiday Logic ---
+
 $holiday_definitions = [
     '01-01' => 'New Year Day',
     '04-13' => 'Songkran Day',
@@ -144,7 +144,6 @@ $is_due_6m = in_array($cur_m, [1, 7]);
                                     $val = isset($row["day_$i"]) ? $row["day_$i"] : null; 
                                     $cls = ($val=='1')?'st-ok':(($val=='0')?'st-fail':'st-null'); 
                                     $icon = ($val=='1')?'<i class="fa-solid fa-check"></i>':(($val=='0')?'<i class="fa-solid fa-xmark"></i>':''); 
-                                    // 🔥 ลบ logic ใส่สีออกจากตรงนี้แล้ว
                                 ?>
                                     <td class="c-wrap" data-sys="<?=$name?>" data-col="day_<?=$i?>" data-val="<?=$val?>"><div class="cell-btn <?=$cls?>"><?=$icon?></div></td>
                                 <?php endfor; ?>
