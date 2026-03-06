@@ -61,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Change Password - PM System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../login/css/change_password.css">
+    
 </head>
 <body>
     <div class="login-card">
@@ -77,25 +78,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         <?php else: ?>
             <form method="POST">
-                <input type="text" name="username" placeholder="ชื่อผู้ใช้งาน (Username)" required>
-                
-                <div class="input-group">
-                    <input type="password" name="current_password" id="current_password" placeholder="รหัสผ่านปัจจุบัน" required>
-                    <i class="fa-solid fa-eye toggle-password" onclick="togglePass('current_password', this)"></i>
-                </div>
+    <div class="input-group">
+        <input type="text" name="username" placeholder="ชื่อผู้ใช้งาน (Username)" required>
+    </div>
+    
+    <div class="input-group">
+        <input type="password" name="current_password" id="current_password" placeholder="รหัสผ่านปัจจุบัน" required>
+        <i class="fa-solid fa-eye toggle-password" onclick="togglePass('current_password', this)"></i>
+    </div>
 
-                <div class="input-group">
-                    <input type="password" name="new_password" id="new_password" placeholder="รหัสผ่านใหม่ (8-16 ตัว) " required>
-                    <i class="fa-solid fa-eye toggle-password" onclick="togglePass('new_password', this)"></i>
-                </div>
+    <div class="input-group">
+        <input type="password" name="new_password" id="new_password" placeholder="รหัสผ่านใหม่ (8-16 ตัว)" required>
+        <i class="fa-solid fa-eye toggle-password" onclick="togglePass('new_password', this)"></i>
+    </div>
 
-                <div class="input-group">
-                    <input type="password" name="confirm_password" id="confirm_password" placeholder="ยืนยันรหัสผ่านใหม่" required>
-                    <i class="fa-solid fa-eye toggle-password" onclick="togglePass('confirm_password', this)"></i>
-                </div>
+    <div class="input-group">
+        <input type="password" name="confirm_password" id="confirm_password" placeholder="ยืนยันรหัสผ่านใหม่" required>
+        <i class="fa-solid fa-eye toggle-password" onclick="togglePass('confirm_password', this)"></i>
+    </div>
 
-                <button type="submit">ยืนยันการเปลี่ยนรหัส</button>
-            </form>
+    <button type="submit">ยืนยันการเปลี่ยนรหัส</button>
+</form>
             <div class="link-group">
                 <a href="login.php"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าเข้าสู่ระบบ</a>
             </div>
