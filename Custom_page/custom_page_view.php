@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php'; 
+include '../db.php';
 
 // รับค่า ID หน้าจาก URL
 $page_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
@@ -15,13 +15,8 @@ if (isset($_POST['upload'])) {
     $date = $_POST['report_date']; 
     if (!empty($_FILES['file_upload']['name'])) {
         $file = $_FILES['file_upload'];
-        
-        // 1. แยกชื่อไฟล์เดิมและนามสกุล
         $filename_original = pathinfo($file['name'], PATHINFO_FILENAME);
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        
-        // 2. ตั้งชื่อใหม่: [ชื่อเดิม]_[เวลา].[นามสกุล] 
-        // เช่น รายงาน_1712345678.pdf (กันไฟล์ชื่อเดียวกันทับกัน)
         $new_name = $filename_original . "_" . time() . "." . $ext;
         
         if (!is_dir('uploads')) { mkdir('uploads', 0777, true); }
@@ -52,14 +47,15 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?=$page_data['page_name']?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/theme.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/custom_page.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../Custom_page/css/custom_page.css">
+    <link rel="stylesheet" href="../Custom_page/css/custom_page_layout.css">
 </head>
 <body>
     <?php 
-    $path = ""; 
-    include 'components/header_nav.php'; 
+    $path = "../"; 
+    include '../components/header_nav.php'; 
     ?>
 
     <div class="main">
@@ -93,68 +89,57 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
                     </button>
                 </form>
 
-                <div class="table-responsive">
-                    <table class="file-table">
-                        <thead>
-                            <tr>
-                                <th width="15%">วันที่ลงข้อมูล</th>
-                                <th>ชื่อไฟล์เอกสาร</th>
-                                <th width="10%">ประเภท</th>
-                                <th width="10%" style="text-align:center">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php while($f = $files->fetch_assoc()): 
-                                $file_ext = $f['file_type'];
-                                $icon_class = ($file_ext == 'pdf') ? 'fa-file-pdf' : 'fa-file-image';
-                                
-                                // ✅ ตั้งค่าสีให้ไอคอนไฟล์
-                                $icon_color = ($file_ext == 'pdf') ? '#ef4444' : '#3b82f6';
-                                
-                                // --- ส่วนจัดการการแสดงผลชื่อไฟล์เดิม ---
-                                $full_filename = $f['file_path'];
-                                // ค้นหาตำแหน่ง _ ตัวสุดท้ายเพื่อตัด Timestamp ออกตอนโชว์
-                                $last_underscore = strrpos($full_filename, '_');
-                                if ($last_underscore !== false) {
-                                    $display_name = substr($full_filename, 0, $last_underscore) . "." . $file_ext;
-                                } else {
-                                    $display_name = $full_filename;
-                                }
-                            ?>
-                            <tr>
-                                <td><span style="font-weight:600; color:var(--text-main);"><?=date('d/m/Y', strtotime($f['report_date']))?></span></td>
-                                <td>
-                                    <a href="uploads/<?=$f['file_path']?>" target="_blank" class="file-link">
-                                        <i class="fa-solid <?=$icon_class?>" style="font-size:1.2rem; opacity:0.9; color: <?=$icon_color?>;"></i>
-                                        <?=htmlspecialchars($display_name)?>
-                                    </a>
-                                </td>
-                                <td><span class="badge-type"><?=strtoupper($file_ext)?></span></td>
-                                <td align="center">
-                                    <a href="?id=<?=$page_id?>&del_file=<?=$f['id']?>" 
-                                       class="del-btn"
-                                       style="color: #ef4444; font-size: 1.2rem;"
-                                       onclick="return confirm('คุณต้องการลบไฟล์นี้ใช่หรือไม่?')">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endwhile; ?>
-                            <?php if($files->num_rows == 0): ?>
-                            <tr>
-                                <td colspan="4" align="center" style="padding:80px; color:var(--text-sub);">
-                                    <i class="fa-solid fa-folder-open" style="font-size:3.5rem; display:block; margin-bottom:20px; opacity:0.15;"></i>
-                                    ไม่มีข้อมูลเอกสารในระบบ
-                                </td>
-                            </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
+                <div class="wf-scroll-area">
+                    <div class="table-responsive">
+                        <table class="file-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">วันที่ลงข้อมูล</th>
+                                    <th>ชื่อไฟล์เอกสาร</th>
+                                    <th width="10%">ประเภท</th>
+                                    <th width="10%" style="text-align:center">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while($f = $files->fetch_assoc()): 
+                                    $file_ext = $f['file_type'];
+                                    $icon_class = ($file_ext == 'pdf') ? 'fa-file-pdf' : 'fa-file-image';
+                                    $icon_color = ($file_ext == 'pdf') ? '#ef4444' : '#3b82f6';
+                                    $full_filename = $f['file_path'];
+                                    $last_underscore = strrpos($full_filename, '_');
+                                    $display_name = ($last_underscore !== false) ? substr($full_filename, 0, $last_underscore) . "." . $file_ext : $full_filename;
+                                ?>
+                                <tr>
+                                    <td><span style="font-weight:600; color:var(--text-main);"><?=date('d/m/Y', strtotime($f['report_date']))?></span></td>
+                                    <td>
+                                        <a href="uploads/<?=$f['file_path']?>" target="_blank" class="file-link">
+                                            <i class="fa-solid <?=$icon_class?>" style="font-size:1.2rem; opacity:0.9; color: <?=$icon_color?>;"></i>
+                                            <?=htmlspecialchars($display_name)?>
+                                        </a>
+                                    </td>
+                                    <td><span class="badge-type"><?=strtoupper($file_ext)?></span></td>
+                                    <td align="center">
+                                        <a href="?id=<?=$page_id?>&del_file=<?=$f['id']?>" class="del-btn" style="color: #ef4444; font-size: 1.2rem;" onclick="return confirm('คุณต้องการลบไฟล์นี้ใช่หรือไม่?')">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <?php endwhile; ?>
+                                <?php if($files->num_rows == 0): ?>
+                                <tr>
+                                    <td colspan="4" align="center" style="padding:80px; color:var(--text-sub);">
+                                        <i class="fa-solid fa-folder-open" style="font-size:3.5rem; display:block; margin-bottom:20px; opacity:0.15;"></i>
+                                        ไม่มีข้อมูลเอกสารในระบบ
+                                    </td>
+                                </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> 
             </div>
             <div style="height: 40px;"></div>
         </div>
     </div>
-   
 </body>
 </html>

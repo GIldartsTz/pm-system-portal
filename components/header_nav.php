@@ -69,7 +69,7 @@ if(!isset($conn)) {
         while($np = $nav_pages->fetch_assoc()):
             $is_active = ($is_on_custom_view && isset($_GET['id']) && $_GET['id'] == $np['id']) ? 'active' : '';
         ?>
-        <a href="<?=$p?>custom_page_view.php?id=<?=$np['id']?>" class="nav-link <?=$is_active?>">
+        <a href="<?=$p?>Custom_page/custom_page_view.php?id=<?=$np['id']?>" class="nav-link <?=$is_active?>">
             <i class="fa-solid fa-file-invoice"></i> <span><?=$np['page_name']?></span>
         </a>
         <?php endwhile; ?>
