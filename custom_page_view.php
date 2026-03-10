@@ -108,6 +108,9 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
                                 $file_ext = $f['file_type'];
                                 $icon_class = ($file_ext == 'pdf') ? 'fa-file-pdf' : 'fa-file-image';
                                 
+                                // ✅ ตั้งค่าสีให้ไอคอนไฟล์
+                                $icon_color = ($file_ext == 'pdf') ? '#ef4444' : '#3b82f6';
+                                
                                 // --- ส่วนจัดการการแสดงผลชื่อไฟล์เดิม ---
                                 $full_filename = $f['file_path'];
                                 // ค้นหาตำแหน่ง _ ตัวสุดท้ายเพื่อตัด Timestamp ออกตอนโชว์
@@ -122,7 +125,7 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
                                 <td><span style="font-weight:600; color:var(--text-main);"><?=date('d/m/Y', strtotime($f['report_date']))?></span></td>
                                 <td>
                                     <a href="uploads/<?=$f['file_path']?>" target="_blank" class="file-link">
-                                        <i class="fa-solid <?=$icon_class?>" style="font-size:1.2rem; opacity:0.8;"></i>
+                                        <i class="fa-solid <?=$icon_class?>" style="font-size:1.2rem; opacity:0.9; color: <?=$icon_color?>;"></i>
                                         <?=htmlspecialchars($display_name)?>
                                     </a>
                                 </td>
