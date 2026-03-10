@@ -164,7 +164,7 @@ if($check_cp && $check_cp->num_rows > 0) {
                                                         </button>
                                                     <?php elseif($row['sub_at']): ?>
                                                         <button class="btn-action btn-danger" onclick="handleAction('cancel_submit', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)">
-                                                            <i class="fa-solid fa-rotate-left"></i> ยกเลิก Submit
+                                                            <i class="fa-solid fa-rotate-left"></i> Submitted
                                                         </button>
                                                     <?php else: ?>
                                                         <button class="btn-action btn-warning" onclick="handleAction('submit', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)">
@@ -174,7 +174,7 @@ if($check_cp && $check_cp->num_rows > 0) {
 
                                                     <?php if($row['app_at']): ?>
                                                         <button class="btn-action btn-danger" onclick="handleAction('cancel_approve', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)">
-                                                            <i class="fa-solid fa-rotate-left"></i> ยกเลิก Approve
+                                                            <i class="fa-solid fa-rotate-left"></i> Approved
                                                         </button>
                                                     <?php elseif($row['sub_at']): ?>
                                                         <button class="btn-action btn-warning" onclick="handleAction('approve', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)">
