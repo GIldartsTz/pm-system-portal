@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// --- 1. Session & Auth ---
 $timeout = 60 * 60; 
 if (isset($_SESSION['last_active']) && (time() - $_SESSION['last_active'] > $timeout)) {
     session_unset(); session_destroy(); header("Location: login/login.php?timeout=1"); exit();
@@ -9,22 +8,17 @@ if (isset($_SESSION['last_active']) && (time() - $_SESSION['last_active'] > $tim
 $_SESSION['last_active'] = time();
 if (!isset($_SESSION['user_id'])) { header("Location: login/login.php"); exit(); }
 
-// ✅ CONFIG
+
 $current_page = 'dashboard';
 $path = ''; 
 
 include 'db.php';
 
-// --- 2. Filter ---
 $selected_year = isset($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
 $years_range = range(2026, 2030); 
 $months = [1=>'Jan',2=>'Feb',3=>'Mar',4=>'Apr',5=>'May',6=>'Jun',7=>'Jul',8=>'Aug',9=>'Sep',10=>'Oct',11=>'Nov',12=>'Dec'];
 
-// =================================================================================
-// 🔥 DYNAMIC SYSTEM CONFIGURATION
-// =================================================================================
 
-// 1. ดึง Tasks จาก DB และแยก Category (Hardware/Software)
 $dynamic_tasks = [];
 $q_tasks = $conn->query("SELECT * FROM master_tasks ORDER BY system_type, id ASC");
 if ($q_tasks) {
@@ -43,9 +37,9 @@ if ($q_tasks) {
 
 $systems = [];
 
-// --- 1. BACKUP (Strict Task Count: Plan 2) ---
+
 $systems['backup'] = [
-    'label' => 'Backup Server', 'table' => 'backup_logs',
+    'label' => 'Backup Logs', 'table' => 'backup_logs',
     'freqs' => [
         'D' => ['label'=>'Daily (D)', 'type'=>'days', 'plan_mode'=>'calc_daily_dynamic', 'cols'=>[]]
     ]
@@ -58,7 +52,7 @@ if (isset($dynamic_tasks['backup']['6M'])) {
 
 // --- 2. SERVER (Count All Checks) ---
 if (isset($dynamic_tasks['server'])) {
-    $systems['server'] = ['label' => 'Server & Data Center', 'table' => 'server_logs', 'freqs' => []];
+    $systems['server'] = ['label' => 'Server Logs', 'table' => 'server_logs', 'freqs' => []];
     foreach ($dynamic_tasks['server'] as $freq => $cols) {
         $label = ($freq=='M')?'Monthly (M)':(($freq=='3M')?'Quarterly (3M)':(($freq=='6M')?'Semiannual (6M)':'Annual (Y)'));
         $due = ($freq=='M')?range(1,12):(($freq=='3M')?[3,6,9,12]:(($freq=='6M')?[6,12]:[12]));
@@ -66,9 +60,9 @@ if (isset($dynamic_tasks['server'])) {
     }
 }
 
-// --- 3. NETWORK (Count All Checks) ---
+
 if (isset($dynamic_tasks['network'])) {
-    $systems['network'] = ['label' => 'Network Maintenance', 'table' => 'network_logs', 'freqs' => []];
+    $systems['network'] = ['label' => 'Network Logs', 'table' => 'network_logs', 'freqs' => []];
     foreach ($dynamic_tasks['network'] as $freq => $cols) {
         $label = ($freq=='M')?'Monthly (M)':(($freq=='3M')?'Quarterly (3M)':(($freq=='6M')?'Semiannual (6M)':'Annual (Y)'));
         $due = ($freq=='M')?range(1,12):(($freq=='3M')?[3,6,9,12]:(($freq=='6M')?[6,12]:[12]));
@@ -76,9 +70,9 @@ if (isset($dynamic_tasks['network'])) {
     }
 }
 
-// --- 4. SOFTWARE MAINTENANCE ---
+
 if (isset($dynamic_tasks['software'])) {
-    $systems['software'] = ['label' => 'Software Maintenance', 'table' => 'hardsoft_logs', 'freqs' => []];
+    $systems['software'] = ['label' => 'Software Logs', 'table' => 'hardsoft_logs', 'freqs' => []];
     foreach ($dynamic_tasks['software'] as $freq => $cols) {
         $label = ($freq=='M')?'Monthly (M)':(($freq=='3M')?'Quarterly (3M)':(($freq=='6M')?'Semiannual (6M)':'Annual (Y)'));
         $due = ($freq=='M')?range(1,12):(($freq=='3M')?[3,6,9,12]:(($freq=='6M')?[6,12]:[12]));
@@ -86,9 +80,9 @@ if (isset($dynamic_tasks['software'])) {
     }
 }
 
-// --- 5. HARDWARE MAINTENANCE ---
+
 if (isset($dynamic_tasks['hardware'])) {
-    $systems['hardware'] = ['label' => 'Hardware Maintenance', 'table' => 'hardsoft_logs', 'freqs' => []];
+    $systems['hardware'] = ['label' => 'Hardware Logs', 'table' => 'hardsoft_logs', 'freqs' => []];
     foreach ($dynamic_tasks['hardware'] as $freq => $cols) {
         $label = ($freq=='M')?'Monthly (M)':(($freq=='3M')?'Quarterly (3M)':(($freq=='6M')?'Semiannual (6M)':'Annual (Y)'));
         $due = ($freq=='M')?range(1,12):(($freq=='3M')?[3,6,9,12]:(($freq=='6M')?[6,12]:[12]));
@@ -96,7 +90,7 @@ if (isset($dynamic_tasks['hardware'])) {
     }
 }
 
-// --- 6. General HardSoft (Fallback) ---
+
 if (isset($dynamic_tasks['hardsoft'])) {
     $systems['hardsoft'] = ['label' => 'H/W & S/W (General)', 'table' => 'hardsoft_logs', 'freqs' => []];
     foreach ($dynamic_tasks['hardsoft'] as $freq => $cols) {
@@ -106,8 +100,8 @@ if (isset($dynamic_tasks['hardsoft'])) {
     }
 }
 
-// --- Data Processing (คำนวณกราฟ) ---
-$dashboard_data = []; // ✅ ตัวแปรเจ้าปัญหา ถูกประกาศตรงนี้ครับ
+
+$dashboard_data = []; 
 foreach ($systems as $sys_key => $sys_conf) {
     $logs = [];
     $table = $sys_conf['table'];

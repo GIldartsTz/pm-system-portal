@@ -1,31 +1,27 @@
-// manage_config.js - ฉบับสมบูรณ์ (Filter + Theme)
-
-// 1. ฟังก์ชันกรองตาราง (Filter Table)
+// 1. ฟังก์ชันกรองตาราง 
 function filterTable(tableId, filterValue) {
     var table = document.getElementById(tableId);
     if (!table) return;
     
     var rows = table.getElementsByTagName("tr");
 
-    // เริ่ม loop ที่ 1 เพราะแถว 0 คือ Header ตารางหลัก
+
     for (var i = 1; i < rows.length; i++) { 
         var row = rows[i];
         
-        // รับค่าป้ายกำกับที่ฝังไว้ในแต่ละแถว
+
         var sys = row.getAttribute("data-sys");
         var cat = row.getAttribute("data-cat");
 
-        // ข้ามแถวที่ไม่มีข้อมูล (ยกเว้น Header ของตาราง)
+
         if (!sys && !row.classList.contains('section-header')) continue;
 
-        // --- Logic การกรอง ---
-        
-        // 1. แสดงทั้งหมด
+       
         if (filterValue === "all") {
             row.style.display = "";
         } 
         
-        // 2. กรองเฉพาะ Hardware (โชว์แถวที่เป็น Hardware + หัวข้อ Hardware)
+        
         else if (filterValue === "hardware") {
             if (cat === "hardware") {
                 row.style.display = "";
@@ -34,7 +30,7 @@ function filterTable(tableId, filterValue) {
             }
         }
         
-        // 3. กรองเฉพาะ Software (โชว์แถวที่เป็น Software + หัวข้อ Software)
+        
         else if (filterValue === "software") {
             if (cat === "software") {
                 row.style.display = "";
@@ -43,7 +39,7 @@ function filterTable(tableId, filterValue) {
             }
         }
         
-        // 4. กรอง HardSoft รวม (โชว์หมดทั้ง Hardware และ Software)
+        
         else if (filterValue === "hardsoft") {
             if (sys === "hardsoft") {
                 row.style.display = "";
@@ -52,7 +48,7 @@ function filterTable(tableId, filterValue) {
             }
         }
         
-        // 5. กรณีอื่นๆ (Server, Network, Backup)
+       
         else {
             if (sys === filterValue) {
                 row.style.display = "";
@@ -63,7 +59,62 @@ function filterTable(tableId, filterValue) {
     }
 }
 
-// 2. Theme Switcher (เปลี่ยนธีม Dark/Light)
+// 2. ฟังก์ชันจัดการหน้าอิสระ
+window.editPage = function(id, name) {
+    const pageIdInput = document.getElementById('page_id');
+    const pageNameInput = document.getElementById('page_name');
+    const btnSubmit = document.getElementById('btnPageSubmit');
+    const btnCancel = document.getElementById('btnCancelEdit');
+
+    if (pageIdInput && pageNameInput) {
+        
+        pageIdInput.value = id;
+        pageNameInput.value = name;
+        
+        
+        if (btnSubmit) {
+            btnSubmit.innerHTML = '<i class="fa-solid fa-save"></i> บันทึกการแก้ไข';
+            btnSubmit.style.background = '#f59e0b'; // 
+        }
+        
+        
+        if (btnCancel) {
+            btnCancel.style.display = 'inline-block';
+        }
+
+        
+        const form = document.getElementById('customPageForm');
+        if (form) {
+            window.scrollTo({ top: form.offsetTop - 100, behavior: 'smooth' });
+        }
+    }
+};
+
+window.cancelEditPage = function() {
+    const pageIdInput = document.getElementById('page_id');
+    const pageNameInput = document.getElementById('page_name');
+    const btnSubmit = document.getElementById('btnPageSubmit');
+    const btnCancel = document.getElementById('btnCancelEdit');
+
+    if (pageIdInput && pageNameInput) {
+        
+        pageIdInput.value = '0';
+        pageNameInput.value = '';
+        
+        
+        if (btnSubmit) {
+            btnSubmit.innerHTML = '<i class="fa-solid fa-plus"></i> สร้างหน้า';
+            btnSubmit.style.background = '#10b981'; 
+        }
+        
+        
+        if (btnCancel) {
+            btnCancel.style.display = 'none';
+        }
+    }
+};
+
+// 3. เปลี่ยนธีม Dark/Light
 document.addEventListener('DOMContentLoaded', () => {
     const root = document.documentElement;
     const themeIcon = document.getElementById('themeIcon');

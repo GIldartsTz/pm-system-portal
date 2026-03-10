@@ -1,6 +1,4 @@
-// dashboard.js
-
-// ฟังก์ชันกรองการแสดงผล (Filter System & Frequency)
+// ฟังก์ชันกรองการแสดงผล
 function applyFilter() {
     const sysVal = document.getElementById('filterSys').value;
     const freqVal = document.getElementById('filterFreq').value;
@@ -12,7 +10,7 @@ function applyFilter() {
         const cardSys = card.getAttribute('data-sys');
         const cardFreq = card.getAttribute('data-freq');
         
-        // ตรวจสอบเงื่อนไข (Match System & Frequency)
+        
         const matchSys = (sysVal === 'all' || sysVal === cardSys);
         const matchFreq = (freqVal === 'all' || freqVal === cardFreq);
         
@@ -24,14 +22,13 @@ function applyFilter() {
         }
     });
     
-    // แสดงข้อความเมื่อไม่พบข้อมูล
     const noDataMsg = document.getElementById('noDataMsg');
     if (noDataMsg) {
         noDataMsg.style.display = (visibleCount === 0) ? 'block' : 'none';
     }
 }
 
-// (Optional) เรียก applyFilter ครั้งแรกเมื่อโหลดหน้าเว็บ
+
 document.addEventListener('DOMContentLoaded', () => {
     applyFilter();
 });

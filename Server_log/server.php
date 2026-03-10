@@ -7,14 +7,14 @@ if (isset($_SESSION['last_active']) && (time() - $_SESSION['last_active'] > $tim
 $_SESSION['last_active'] = time();
 if (!isset($_SESSION['user_id'])) { header("Location: ../login/login.php"); exit(); }
 
-// ✅ CONFIG
+
 $current_page = 'server';
 $path = '../'; 
 
 include '../db.php'; 
-// Config
+
 $TABLE_NAME = 'server_logs'; 
-$PAGE_TITLE = 'Server Check'; 
+$PAGE_TITLE = 'Server Logs'; 
 $ICON_CLASS = 'fa-server'; 
 $THEME = '#10b981';
 
@@ -37,11 +37,19 @@ if($master_eq){ while($me = $master_eq->fetch_assoc()){
     if($check->num_rows == 0) $conn->query("INSERT INTO $TABLE_NAME (equipment_name, month, year) VALUES ('$ename', $cur_m, $cur_y)");
 }}
 
-// 🔥🔥🔥 แก้ตรงนี้ครับ: เพิ่ม ORDER BY id ASC ให้เรียงตามลำดับที่ Insert 🔥🔥🔥
 $result = $conn->query("SELECT * FROM $TABLE_NAME WHERE month=$cur_m AND year=$cur_y ORDER BY id ASC"); 
 
 $grand_total=0; $table_data=[];
-if($res=$result){ while($r=$res->fetch_assoc()){ $table_data[]=$r; foreach($task_headers as $k=>$v) if(isset($r[$k])&&$r[$k]=='1') $grand_total++; }}
+if($res=$result){ 
+    while($r=$res->fetch_assoc()){ 
+        $table_data[]=$r; 
+        foreach($task_headers as $k=>$v) {
+            if(isset($r[$k]) && ($r[$k] == '1' || $r[$k] == '0')) {
+                $grand_total++; 
+            }
+        }
+    }
+}
 $q_time = $conn->query("SELECT MAX(last_updated) as latest FROM $TABLE_NAME WHERE month=$cur_m AND year=$cur_y");
 $r_time = $q_time->fetch_assoc(); $global_last_update = $r_time['latest'] ? date('d M Y, H:i', strtotime($r_time['latest'])) : '-';
 ?>
@@ -50,7 +58,7 @@ $r_time = $q_time->fetch_assoc(); $global_last_update = $r_time['latest'] ? date
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Portal - PM System</title>
+    <title>Server Logs</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -65,7 +73,7 @@ $r_time = $q_time->fetch_assoc(); $global_last_update = $r_time['latest'] ? date
         <div class="controls-bar">
             <div class="page-head"><h1><?=$PAGE_TITLE?></h1><small>Updated: <span id="lastUpd"><?=$global_last_update?></span></small></div>
             <div class="filters">
-                <div class="stat-box"><span class="lbl">Total</span><span class="val" style="color:var(--primary)" id="grandTotal"><?=number_format($grand_total)?></span></div>
+                <div class="stat-box" style="display: none;"><span class="lbl">Total</span><span class="val" style="color:var(--primary)" id="grandTotal"><?=number_format($grand_total)?></span></div>
                 <form method="GET" class="picker"><i class="fa-regular fa-calendar" style="color:var(--text-sub)"></i><select name="month" onchange="this.form.submit()"><?php foreach($month_names as $n=>$m) echo "<option value='$n' ".($n==$cur_m?'selected':'').">$m</option>"; ?></select><select name="year" onchange="this.form.submit()"><?php foreach($years as $y) echo "<option value='$y' ".($y==$cur_y?'selected':'').">$y</option>"; ?></select></form>
                 <div class="actions">
                     <button class="active-view" onclick="setTool('safe',this)"><i class="fa-solid fa-arrow-pointer"></i></button>
@@ -97,8 +105,13 @@ $r_time = $q_time->fetch_assoc(); $global_last_update = $r_time['latest'] ? date
                         </thead>
                         <tbody>
                             <?php if(!empty($table_data)): foreach($table_data as $row): 
-                                $name=$row['equipment_name']; $sum=0; 
-                                foreach($task_headers as $k=>$v) if(isset($row[$k]) && $row[$k]=='1') $sum++; 
+                                $name=$row['equipment_name']; 
+                                $sum=0; 
+                                foreach($task_headers as $k=>$v) {
+                                    if(isset($row[$k]) && ($row[$k] == '1' || $row[$k] == '0')) {
+                                        $sum++;
+                                    }
+                                }
                             ?>
                             <tr>
                                 <td><?=$name?></td>
@@ -126,5 +139,5 @@ $r_time = $q_time->fetch_assoc(); $global_last_update = $r_time['latest'] ? date
             curY: <?php echo $cur_y; ?>
         };
     </script>
-    <script src="../Server/js/server.js"></script>
+    <script src="../Server_log/js/server.js"></script>
 </html>

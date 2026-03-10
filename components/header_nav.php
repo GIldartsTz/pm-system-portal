@@ -1,6 +1,14 @@
 <?php
-// รับค่า path จากหน้าที่เรียกใช้ (ถ้าไม่มีให้เป็นค่าว่าง)
+
 $p = isset($path) ? $path : '../'; 
+
+
+$current_page = isset($current_page) ? $current_page : '';
+
+
+if(!isset($conn)) {
+    include_once 'db.php';
+}
 ?>
 
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
@@ -39,17 +47,32 @@ $p = isset($path) ? $path : '../';
         
         <div class="nav-title">ICT STAFF</div>
         <a href="<?=$p?>Backup_log/backup.php" class="nav-link <?=($current_page=='backup')?'active':''?>">
-            <i class="fa-solid fa-database"></i> <span>Backup Log</span>
+            <i class="fa-solid fa-database"></i> <span>Backup Logs</span>
         </a>
         <a href="<?=$p?>Server_log/server.php" class="nav-link <?=($current_page=='server')?'active':''?>">
-            <i class="fa-solid fa-server"></i> <span>Server Check</span>
+            <i class="fa-solid fa-server"></i> <span>Server Logs</span>
         </a>
         <a href="<?=$p?>Network_log/network.php" class="nav-link <?=($current_page=='network')?'active':''?>">
-            <i class="fa-solid fa-network-wired"></i> <span>Network</span>
+            <i class="fa-solid fa-network-wired"></i> <span>Network Logs</span>
         </a>
         <a href="<?=$p?>HardSoft_log/hardsoft.php" class="nav-link <?=($current_page=='hardsoft')?'active':''?>">
-            <i class="fa-solid fa-microchip"></i> <span>H/W & S/W</span>
+            <i class="fa-solid fa-microchip"></i> <span>Hardware/Software</span>
         </a>
+
+        <div class="nav-title">OTHER</div>
+        
+
+        <?php
+        $nav_pages = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
+        $is_on_custom_view = (basename($_SERVER['PHP_SELF']) == 'custom_page_view.php');
+        
+        while($np = $nav_pages->fetch_assoc()):
+            $is_active = ($is_on_custom_view && isset($_GET['id']) && $_GET['id'] == $np['id']) ? 'active' : '';
+        ?>
+        <a href="<?=$p?>custom_page_view.php?id=<?=$np['id']?>" class="nav-link <?=$is_active?>">
+            <i class="fa-solid fa-file-invoice"></i> <span><?=$np['page_name']?></span>
+        </a>
+        <?php endwhile; ?>
         
         <div class="nav-bottom">
             <a href="<?=$p?>login/logout.php" class="nav-link logout-link">
@@ -61,7 +84,6 @@ $p = isset($path) ? $path : '../';
 </nav>
 
 <script>
-    // Theme Toggle
     const root = document.documentElement; 
     if(localStorage.getItem('theme') === 'dark') root.setAttribute('data-theme', 'dark');
     
