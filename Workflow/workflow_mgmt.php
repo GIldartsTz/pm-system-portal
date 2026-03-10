@@ -13,6 +13,7 @@ if (file_exists('../db.php')) {
 
 if (!isset($_SESSION['user_id'])) { header("Location: {$base_path}login/login.php"); exit(); }
 
+$is_admin = (isset($_SESSION['role']) && $_SESSION['role'] === 'admin');
 $cur_m = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
 $cur_y = isset($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
 $month_names = [1=>"Jan", 2=>"Feb", 3=>"Mar", 4=>"Apr", 5=>"May", 6=>"June", 7=>"Jul", 8=>"Aug", 9=>"Sep", 10=>"Oct", 11=>"Nov", 12=>"Dec"];

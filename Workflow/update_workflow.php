@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    die(json_encode(['success' => false, 'error' => 'Permission Denied: เฉพาะ Admin เท่านั้นที่สามารถทำรายการได้']));
+}
 // ระบบ Auto-Detect Path ป้องกันหา db.php ไม่เจอ
 if (file_exists('../db.php')) { 
     include '../db.php'; 
