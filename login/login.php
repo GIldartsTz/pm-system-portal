@@ -56,7 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <div class="link-group">
             <a href="change_password.php"><i class="fa-solid fa-key"></i> เปลี่ยนรหัสผ่าน</a>
-        </div>
+            <span style="color: #ccc; margin: 0 10px;">|</span>
+            <a href="register.php" style="color: var(--primary); font-weight: 500;"><i class="fa-solid fa-user-plus"></i> สมัครสมาชิก</a>
     </div>
 </body>
 </html>
