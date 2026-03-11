@@ -72,10 +72,10 @@ if($check_cp && $check_cp->num_rows > 0) {
     <title>Workflow Management - TTM PM Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="<?=$base_path?>css/theme.css">
-    <link rel="stylesheet" href="<?=$base_path?>css/layout.css">
-    <link rel="stylesheet" href="<?=$base_path?>css/custom_page.css">
-    <link rel="stylesheet" href="css/workflow.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../Custom_page/css/custom_page.css">
+    <link rel="stylesheet" href="../Workflow/css/workflow.css">
 </head>
 <body>
     <?php 
