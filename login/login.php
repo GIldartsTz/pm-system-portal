@@ -43,8 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <div class="login-card">
-        <div class="logo"><i class="fa-solid fa-cube"></i></div>
-        <h2>PM System</h2>
+        <div class="logo" style="font-size: 3rem; color: #000000; margin-bottom: 15px; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+            <i class="fa-solid fa-cube"></i>
+        </div>
+        <h2 style="color: #000000;">PM System</h2>
         <?php if($error): ?>
             <div class="error"><i class="fa-solid fa-circle-exclamation"></i> <?=$error?></div>
         <?php endif; ?>
@@ -55,9 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
         
         <div class="link-group">
-            <a href="change_password.php"><i class="fa-solid fa-key"></i> เปลี่ยนรหัสผ่าน</a>
+            <a href="change_password.php" style="color: #ffffff;"><i class="fa-solid fa-key"></i> เปลี่ยนรหัสผ่าน</a>
             <span style="color: #ccc; margin: 0 10px;">|</span>
-            <a href="register.php" style="color: var(--primary); font-weight: 500;"><i class="fa-solid fa-user-plus"></i> สมัครสมาชิก</a>
+            <a href="register.php" style="color: #ffffff; font-weight: 500;"><i class="fa-solid fa-user-plus"></i> สมัครสมาชิก</a>
+        </div>
     </div>
 </body>
 </html>

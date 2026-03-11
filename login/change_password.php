@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <div class="login-card">
-        <h2 style="font-size: 1.5rem;"><i class="fa-solid fa-key"></i> เปลี่ยนรหัสผ่าน</h2>
+        <h2 style="font-size: 1.5rem; color: #000000; margin-bottom: 15px; text-shadow: 0 4px 10px rgba(0,0,0,0.3);"><i class="fa-solid fa-key"></i> เปลี่ยนรหัสผ่าน</h2>
         
         <?php if($error): ?>
             <div class="error"><i class="fa-solid fa-circle-exclamation"></i> <?=$error?></div>
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <button type="submit">ยืนยันการเปลี่ยนรหัส</button>
 </form>
             <div class="link-group">
-                <a href="login.php"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าเข้าสู่ระบบ</a>
+                <a href="login.php" style="color: #ffffff;"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าเข้าสู่ระบบ</a>
             </div>
         <?php endif; ?>
     </div>
