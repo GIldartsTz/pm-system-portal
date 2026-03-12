@@ -39,6 +39,19 @@ if (isset($_POST['add_equip'])) {
         $check = $conn->query("SELECT id FROM master_equipment WHERE system_type='$sys' AND equipment_name='$name'");
         if ($check->num_rows == 0) {
             if ($conn->query("INSERT INTO master_equipment (system_type, equipment_name) VALUES ('$sys', '$name')")) {
+                // Pre-insert rows ทุกเดือนของปีปัจจุบัน เพื่อให้ Dashboard และ update.php ทำงานได้ทันที
+                $table_map = ['hardsoft'=>'hardsoft_logs', 'server'=>'server_logs', 'network'=>'network_logs', 'backup'=>'backup_logs'];
+                $cur_year = (int)date('Y');
+                if (isset($table_map[$sys])) {
+                    $tbl_pre = $table_map[$sys];
+                    for ($mo = 1; $mo <= 12; $mo++) {
+                        $conn->query("INSERT INTO $tbl_pre (equipment_name, month, year) 
+                                      SELECT '$name', $mo, $cur_year FROM DUAL 
+                                      WHERE NOT EXISTS (
+                                          SELECT 1 FROM $tbl_pre WHERE equipment_name='$name' AND month=$mo AND year=$cur_year
+                                      )");
+                    }
+                }
                 $msg = "✅ เพิ่มอุปกรณ์สำเร็จ!";
             } else { $error = "❌ SQL Error: " . $conn->error; }
         } else { $error = "⚠️ ชื่อซ้ำ"; }
