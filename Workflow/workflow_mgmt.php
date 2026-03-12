@@ -73,7 +73,7 @@ if($check_cp && $check_cp->num_rows > 0) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/theme.css">
-    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../Workflow/css/workflow_layout.css">
     <link rel="stylesheet" href="../Custom_page/css/custom_page.css">
     <link rel="stylesheet" href="../Workflow/css/workflow.css">
 </head>
@@ -85,8 +85,8 @@ if($check_cp && $check_cp->num_rows > 0) {
 
     <div class="main">
         <div class="container">
-            <div class="card custom-card">
-                
+            
+            <div class="card custom-card" style="margin-bottom: 25px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid var(--border);">
                     <div style="display:flex; align-items:center; gap:20px;">
                         <div style="width:55px; height:55px; background:rgba(79, 70, 229, 0.1); color:var(--primary); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:1.6rem;">
@@ -106,102 +106,151 @@ if($check_cp && $check_cp->num_rows > 0) {
                     </form>
                 </div>
 
-                <div class="wf-scroll-area">
-                    <?php foreach(['ICT', 'OTHER'] as $sec_name): ?>
-                        <div class="sec-title">
-                            <?php 
-                                $icon_sec = 'fa-folder';
-                                if($sec_name == 'ICT') $icon_sec = 'fa-desktop';
-                                if($sec_name == 'OTHER') $icon_sec = 'fa-layer-group';
-                            ?>
-                            <i class="fa-solid <?=$icon_sec?>" style="color:var(--primary)"></i> Section: <?=$sec_name?>
-                        </div>
-
-                        <?php if(empty($wf_data[$sec_name])): ?>
-                            <div style="padding:30px; text-align:center; color:var(--text-sub); font-style:italic;">ไม่มีข้อมูลในหมวดหมู่นี้</div>
-                        <?php else: ?>
-                            <div class="table-responsive">
-                                <table class="wf-table">
-                                    <thead>
-                                        <tr>
-                                            <th width="25%">Log System</th>
-                                            <th width="20%">Submission Status</th>
-                                            <th width="20%">Approval Status</th>
-                                            <th width="35%">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach($wf_data[$sec_name] as $row): 
-                                            $final_link = $row['is_custom'] ? $row['link'] : $row['link']."?month=$cur_m&year=$cur_y";
-                                        ?>
-                                        <tr>
-                                            <td>
-                                                <a href="<?=$final_link?>" style="text-decoration:none; color:var(--text-main); font-weight:600; display:flex; align-items:center; gap:10px;">
-                                                    <i class="fa-solid <?=$row['icon']?>" style="color:var(--primary); opacity:0.8;"></i> <?=$row['name']?>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <?php if($row['sub_at']): ?>
-                                                    <span class="badge badge-done">SUBMITTED</span>
-                                                    <div class="wf-info"><i class="fa-solid fa-user"></i> <?=$row['sub_by']?><br><?=date('d M Y, H:i', strtotime($row['sub_at']))?></div>
-                                                <?php else: ?>
-                                                    <span class="badge badge-pending">PENDING</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <?php if($row['app_at']): ?>
-                                                    <span class="badge badge-done">APPROVED</span>
-                                                    <div class="wf-info"><i class="fa-solid fa-user-shield"></i> <?=$row['app_by']?><br><?=date('d M Y, H:i', strtotime($row['app_at']))?></div>
-                                                <?php else: ?>
-                                                    <span class="badge badge-waiting">AWAITING</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <div style="display:flex; gap:10px;">
-                                                    
-                                                    <?php if($row['app_at']): ?>
-                                                        <button class="btn-action btn-success" disabled title="ถูกล็อกเพราะ Approve ไปแล้ว">
-                                                            <i class="fa-solid fa-lock"></i> Submitted
-                                                        </button>
-                                                    <?php elseif($row['sub_at']): ?>
-                                                        <button class="btn-action btn-danger" onclick="handleAction('cancel_submit', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)">
-                                                            <i class="fa-solid fa-rotate-left"></i> Submitted
-                                                        </button>
-                                                    <?php else: ?>
-                                                        <button class="btn-action btn-warning" onclick="handleAction('submit', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)">
-                                                            <i class="fa-solid fa-paper-plane"></i> Submit
-                                                        </button>
-                                                    <?php endif; ?>
-
-                                                    <?php if($row['app_at']): ?>
-                                                        <button class="btn-action btn-danger" onclick="handleAction('cancel_approve', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)">
-                                                            <i class="fa-solid fa-rotate-left"></i> Approved
-                                                        </button>
-                                                    <?php elseif($row['sub_at']): ?>
-                                                        <button class="btn-action btn-warning" onclick="handleAction('approve', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)">
-                                                            <i class="fa-solid fa-stamp"></i> Approve
-                                                        </button>
-                                                    <?php else: ?>
-                                                        <button class="btn-action btn-disabled" disabled title="ต้องทำการ Submit ก่อน">
-                                                            <i class="fa-solid fa-stamp"></i> Approve
-                                                        </button>
-                                                    <?php endif; ?>
-
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
+                <div class="sec-title">
+                    <i class="fa-solid fa-desktop" style="color:var(--primary)"></i> Section: ICT
                 </div>
+
+                <?php if(empty($wf_data['ICT'])): ?>
+                    <div style="padding:30px; text-align:center; color:var(--text-sub); font-style:italic;">ไม่มีข้อมูลในหมวดหมู่นี้</div>
+                <?php else: ?>
+                    <div class="table-responsive">
+                        <table class="wf-table">
+                            <thead>
+                                <tr>
+                                    <th width="25%">Log System</th>
+                                    <th width="20%">Submission Status</th>
+                                    <th width="20%">Approval Status</th>
+                                    <th width="35%">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach($wf_data['ICT'] as $row): 
+                                    $final_link = $row['link']."?month=$cur_m&year=$cur_y";
+                                ?>
+                                <tr>
+                                    <td>
+                                        <a href="<?=$final_link?>" style="text-decoration:none; color:var(--text-main); font-weight:600; display:flex; align-items:center; gap:10px;">
+                                            <i class="fa-solid <?=$row['icon']?>" style="color:var(--primary); opacity:0.8;"></i> <?=$row['name']?>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <?php if($row['sub_at']): ?>
+                                            <span class="badge badge-done">SUBMITTED</span>
+                                            <div class="wf-info"><i class="fa-solid fa-user"></i> <?=$row['sub_by']?><br><?=date('d M Y, H:i', strtotime($row['sub_at']))?></div>
+                                        <?php else: ?>
+                                            <span class="badge badge-pending">PENDING</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if($row['app_at']): ?>
+                                            <span class="badge badge-done">APPROVED</span>
+                                            <div class="wf-info"><i class="fa-solid fa-user-shield"></i> <?=$row['app_by']?><br><?=date('d M Y, H:i', strtotime($row['app_at']))?></div>
+                                        <?php else: ?>
+                                            <span class="badge badge-waiting">AWAITING</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <div style="display:flex; gap:10px;">
+                                            <?php if($row['app_at']): ?>
+                                                <button class="btn-action btn-success" disabled><i class="fa-solid fa-lock"></i> Submitted</button>
+                                            <?php elseif($row['sub_at']): ?>
+                                                <button class="btn-action btn-danger" onclick="handleAction('cancel_submit', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-rotate-left"></i> ยกเลิก Submit</button>
+                                            <?php else: ?>
+                                                <button class="btn-action btn-warning" onclick="handleAction('submit', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-paper-plane"></i> Submit</button>
+                                            <?php endif; ?>
+
+                                            <?php if($row['app_at']): ?>
+                                                <button class="btn-action btn-danger" onclick="handleAction('cancel_approve', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-rotate-left"></i> ยกเลิก Approve</button>
+                                            <?php elseif($row['sub_at']): ?>
+                                                <button class="btn-action btn-warning" onclick="handleAction('approve', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-stamp"></i> Approve</button>
+                                            <?php else: ?>
+                                                <button class="btn-action btn-disabled" disabled><i class="fa-solid fa-stamp"></i> Approve</button>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
             </div>
+
+            <div class="card custom-card">
+                <div class="sec-title" style="margin-top: 0;">
+                    <i class="fa-solid fa-layer-group" style="color:var(--primary)"></i> Section: OTHER
+                </div>
+
+                <?php if(empty($wf_data['OTHER'])): ?>
+                    <div style="padding:30px; text-align:center; color:var(--text-sub); font-style:italic;">ไม่มีข้อมูลในหมวดหมู่นี้</div>
+                <?php else: ?>
+                    <div class="table-responsive">
+                        <table class="wf-table">
+                            <thead>
+                                <tr>
+                                    <th width="25%">Page Name</th>
+                                    <th width="20%">Submission Status</th>
+                                    <th width="20%">Approval Status</th>
+                                    <th width="35%">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach($wf_data['OTHER'] as $row): 
+                                    $final_link = $row['link'];
+                                ?>
+                                <tr>
+                                    <td>
+                                        <a href="<?=$final_link?>" style="text-decoration:none; color:var(--text-main); font-weight:600; display:flex; align-items:center; gap:10px;">
+                                            <i class="fa-solid <?=$row['icon']?>" style="color:var(--primary); opacity:0.8;"></i> <?=$row['name']?>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <?php if($row['sub_at']): ?>
+                                            <span class="badge badge-done">SUBMITTED</span>
+                                            <div class="wf-info"><i class="fa-solid fa-user"></i> <?=$row['sub_by']?><br><?=date('d M Y, H:i', strtotime($row['sub_at']))?></div>
+                                        <?php else: ?>
+                                            <span class="badge badge-pending">PENDING</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if($row['app_at']): ?>
+                                            <span class="badge badge-done">APPROVED</span>
+                                            <div class="wf-info"><i class="fa-solid fa-user-shield"></i> <?=$row['app_by']?><br><?=date('d M Y, H:i', strtotime($row['app_at']))?></div>
+                                        <?php else: ?>
+                                            <span class="badge badge-waiting">AWAITING</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <div style="display:flex; gap:10px;">
+                                            <?php if($row['app_at']): ?>
+                                                <button class="btn-action btn-success" disabled><i class="fa-solid fa-lock"></i> Submitted</button>
+                                            <?php elseif($row['sub_at']): ?>
+                                                <button class="btn-action btn-danger" onclick="handleAction('cancel_submit', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-rotate-left"></i> ยกเลิก Submit</button>
+                                            <?php else: ?>
+                                                <button class="btn-action btn-warning" onclick="handleAction('submit', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-paper-plane"></i> Submit</button>
+                                            <?php endif; ?>
+
+                                            <?php if($row['app_at']): ?>
+                                                <button class="btn-action btn-danger" onclick="handleAction('cancel_approve', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-rotate-left"></i> ยกเลิก Approve</button>
+                                            <?php elseif($row['sub_at']): ?>
+                                                <button class="btn-action btn-warning" onclick="handleAction('approve', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-stamp"></i> Approve</button>
+                                            <?php else: ?>
+                                                <button class="btn-action btn-disabled" disabled><i class="fa-solid fa-stamp"></i> Approve</button>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
+
             <div style="height: 40px;"></div>
         </div>
     </div>
 
     <script src="../Workflow/js/workflow.js"></script> 
-</body>
+</body> 
 </html>
