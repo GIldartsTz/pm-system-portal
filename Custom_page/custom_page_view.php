@@ -48,9 +48,8 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
     <title><?=$page_data['page_name']?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/theme.css">
-    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../Custom_page/css/custom.css">
     <link rel="stylesheet" href="../Custom_page/css/custom_page.css">
-    <link rel="stylesheet" href="../Custom_page/css/custom_page_layout.css">
 </head>
 <body>
     <?php 
