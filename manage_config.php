@@ -180,11 +180,11 @@ $custom_pages = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
                 <form method="POST" class="form-row">
                     <select name="sys_type_task" id="filter_task" onchange="filterTable('task_table', this.value)" required style="flex:0.35">
                         <option value="all">-- แสดงทั้งหมด --</option>
-                        <option value="hardware" style="color:#4f46e5;font-weight:600;">Hardware Logs</option>
-                        <option value="software" style="color:#9333ea;font-weight:600;">Software Logs</option>
+                        <option value="hardware">Hardware Logs</option>
+                        <option value="software">Software Logs</option>
                         <option value="server">Server Logs</option>
                         <option value="network">Network Logs</option>
-                        <option value="backup">Backup Logs</option>
+                        
                     </select>
                     <input type="text" name="task_label" placeholder="ชื่อหัวข้อตรวจ..." style="flex:1;" required>
                     <select name="frequency" style="width:130px;">
