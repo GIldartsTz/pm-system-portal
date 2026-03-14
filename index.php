@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-
 $timeout = 60 * 60; 
 if (isset($_SESSION['last_active']) && (time() - $_SESSION['last_active'] > $timeout)) {
     session_unset(); session_destroy(); header("Location: login/login.php?timeout=1"); exit();
@@ -12,11 +11,8 @@ if (!isset($_SESSION['user_id'])) { header("Location: login/login.php"); exit();
 
 include 'db.php'; 
 
-
 $u_id_update = $_SESSION['user_id'];
 $conn->query("UPDATE users SET last_login = NOW() WHERE id = '$u_id_update'");
-
-
 
 $dashboard_module = [
     'name' => 'Dashboard Overview', 
@@ -47,6 +43,25 @@ $sub_modules = [
     <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/home.css">
     
+    <style>
+        /* เพิ่ม CSS พิเศษสำหรับหน้านี้เพื่อให้รองรับการแสดงผล 5 คอลัมน์ */
+        .modules-5-cols {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        /* ถ้าหน้าจอเล็ก (มือถือ/แท็บเล็ต) ให้มันยุบลงมาเรียงกันจะได้ไม่บีบจนพัง */
+        @media (max-width: 1200px) {
+            .modules-5-cols { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .modules-5-cols { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .modules-5-cols { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -67,31 +82,33 @@ $sub_modules = [
                 <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                 <a href="manage_config.php" class="config-btn"><i class="fa-solid fa-gear"></i> System Config</a>
                 <?php endif; ?>
-                
             </div>
 
-            <div class="grid-layout">
-                <a href="<?=$dashboard_module['link']?>" class="dashboard-card">
-                    <div class="dashboard-content">
+            <div class="dashboard-wrapper">
+                <a href="<?=$dashboard_module['link']?>" class="dashboard-card" style="display: flex; width: 100%; box-sizing: border-box;">
+                    <div class="dashboard-content" style="flex: 1;">
                         <h2><?=$dashboard_module['name']?></h2>
                         <p><?=$dashboard_module['desc']?></p>
                         <span class="dashboard-btn">View Analytics <i class="fa-solid fa-arrow-right"></i></span>
                     </div>
-                    <i class="fa-solid <?=$dashboard_module['icon']?> dashboard-icon"></i>
+                    <i class="fa-solid <?=$dashboard_module['icon']?> dashboard-icon" style="opacity: 0.2; font-size: 5rem;"></i>
                 </a>
+            </div>
 
+            <div class="modules-5-cols">
                 <?php foreach($sub_modules as $m): ?>
                 <a href="<?=$m['link']?>" class="module-card" style="color: <?=$m['color']?>">
                     <div class="mod-icon" style="background: <?=$m['color']?>15;">
                         <i class="fa-solid <?=$m['icon']?>"></i>
                     </div>
                     <div class="mod-info">
-                        <h3><?=$m['name']?></h3>
-                        <p><?=$m['desc']?></p>
+                        <h3 style="font-size: 1rem; margin-bottom: 5px;"><?=$m['name']?></h3>
+                        <p style="font-size: 0.8rem;"><?=$m['desc']?></p>
                     </div>
                 </a>
                 <?php endforeach; ?>
             </div>
+
         </div>
     </main>
 
