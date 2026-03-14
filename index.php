@@ -31,7 +31,8 @@ $sub_modules = [
     ['name' => 'Backup Logs', 'link' => 'Backup_log/backup.php', 'icon' => 'fa-database', 'color' => '#3b82f6', 'desc' => 'Daily backup checklist'],
     ['name' => 'Server Logs', 'link' => 'Server_log/server.php', 'icon' => 'fa-server', 'color' => '#10b981', 'desc' => 'Server maintenance'],
     ['name' => 'Network Logs', 'link' => 'Network_log/network.php', 'icon' => 'fa-network-wired', 'color' => '#f59e0b', 'desc' => 'Network status & devices'],
-    ['name' => 'Hardware/Software', 'link' => 'HardSoft_log/hardsoft.php', 'icon' => 'fa-microchip', 'color' => '#8b5cf6', 'desc' => 'H/W & S/W maintenance']
+    ['name' => 'Hardware Logs', 'link' => 'Hardware_log/hardware.php', 'icon' => 'fa-microchip', 'color' => '#4f46e5', 'desc' => 'Hardware maintenance'],
+    ['name' => 'Software Logs', 'link' => 'Software_log/software.php', 'icon' => 'fa-brands fa-windows', 'color' => '#9333ea', 'desc' => 'Software maintenance']
 ];
 ?>
 <!DOCTYPE html>

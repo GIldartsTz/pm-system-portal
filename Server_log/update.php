@@ -17,7 +17,7 @@ $y = (int)$in['year'];
 $col = $in['column'];
 $val = $in['value'];
 
-if (!in_array($tbl, ['server_logs', 'network_logs', 'hardsoft_logs', 'backup_logs'])) exit(json_encode(['success'=>false, 'msg'=>'ไม่อนุญาตให้อัปเดตตารางนี้']));
+if (!in_array($tbl, ['server_logs', 'network_logs', 'hardware_logs', 'software_logs', 'backup_logs'])) exit(json_encode(['success'=>false, 'msg'=>'ไม่อนุญาตให้อัปเดตตารางนี้']));
 if (!preg_match('/^[a-zA-Z0-9_]+$/', $col)) exit(json_encode(['success'=>false, 'msg'=>'ชื่อคอลัมน์ผิดปกติ: ' . $col]));
 
 // 🚨 จุดสำคัญ: เช็คก่อนว่าคอลัมน์มีอยู่จริงไหม
