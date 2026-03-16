@@ -2,6 +2,7 @@
 session_start();
 
 // ระบบ Auto-Detect Path ป้องกันหา db.php ไม่เจอ
+$current_page = 'workflow';
 $base_path = '';
 if (file_exists('../db.php')) {
     include '../db.php'; $base_path = '../'; 
