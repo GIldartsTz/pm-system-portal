@@ -1,8 +1,6 @@
 
     function handleAction(type, table, is_custom, id_val, year_val) {
         const actionNames = {
-            'submit': 'Submit เอกสาร',
-            'approve': 'Approve เอกสาร',
             'cancel_submit': 'ยกเลิกการ Submit',
             'cancel_approve': 'ยกเลิกการ Approve'
         };

@@ -15,32 +15,30 @@ if (file_exists('../db.php')) {
 if (!isset($_SESSION['user_id'])) { header("Location: {$base_path}login/login.php"); exit(); }
 
 $is_admin = (isset($_SESSION['role']) && $_SESSION['role'] === 'admin');
-$cur_m = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
-$cur_y = isset($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
-$month_names = [1=>"Jan", 2=>"Feb", 3=>"Mar", 4=>"Apr", 5=>"May", 6=>"June", 7=>"Jul", 8=>"Aug", 9=>"Sep", 10=>"Oct", 11=>"Nov", 12=>"Dec"];
 
-// ✅ สร้างตัวเลือกปี 2026 - 2030
-$years = range(2026, 2030);
+$wf_data = ['OTHER' => []];
 
-$wf_data = ['ICT' => []];
-
-$static_logs = [
-    'ICT' => [
-        ['name' => 'Server Logs', 'table' => 'server_logs', 'link' => $base_path.'Server_log/server.php', 'icon' => 'fa-server', 'is_custom' => 0],
-        ['name' => 'Network Logs', 'table' => 'network_logs', 'link' => $base_path.'Network_log/network.php', 'icon' => 'fa-network-wired', 'is_custom' => 0],
-        ['name' => 'Backup Logs', 'table' => 'backup_logs', 'link' => $base_path.'Backup_log/backup.php', 'icon' => 'fa-database', 'is_custom' => 0],
-        ['name' => 'Hardware Logs', 'table' => 'hardware_logs', 'link' => $base_path.'Hardware_log/hardware.php', 'icon' => 'fa-microchip', 'is_custom' => 0],
-        ['name' => 'Software Logs', 'table' => 'software_logs', 'link' => $base_path.'Software_log/software.php', 'icon' => 'fa-windows', 'is_custom' => 0]
-    ]
-];
-
-foreach ($static_logs as $sec_name => $logs) {
-    foreach ($logs as $log) {
-        $q = $conn->query("SELECT sub_by, sub_at, app_by, app_at, sub_note, app_comment FROM {$log['table']} WHERE month=$cur_m AND year=$cur_y LIMIT 1");
-        $res = ($q && $q->num_rows > 0) ? $q->fetch_assoc() : ['sub_by'=>null, 'sub_at'=>null, 'app_by'=>null, 'app_at'=>null, 'sub_note'=>null, 'app_comment'=>null];
-        $log['id_val'] = $cur_m; 
-        $log['year_val'] = $cur_y;
-        $wf_data[$sec_name][] = array_merge($log, $res);
+$check_cp = $conn->query("SHOW TABLES LIKE 'custom_pages'");
+if($check_cp && $check_cp->num_rows > 0) {
+    $cp_q = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
+    if($cp_q && $cp_q->num_rows > 0){
+        while($cp = $cp_q->fetch_assoc()){
+            $wf_data['OTHER'][] = [
+                'name' => $cp['page_name'] ?? 'Unknown Page',
+                'table' => 'custom_pages',
+                'link' => $base_path.'custom_page_view.php?id='.($cp['id'] ?? 1),
+                'icon' => 'fa-file-lines',
+                'is_custom' => 1,
+                'id_val' => $cp['id'] ?? 1,
+                'year_val' => 0,
+                'sub_by' => $cp['sub_by'] ?? null,
+                'sub_at' => $cp['sub_at'] ?? null,
+                'app_by' => $cp['app_by'] ?? null,
+                'app_at' => $cp['app_at'] ?? null,
+                'sub_note' => $cp['sub_note'] ?? null,
+                'app_comment' => $cp['app_comment'] ?? null
+            ];
+        }
     }
 }
 ?>
@@ -49,7 +47,7 @@ foreach ($static_logs as $sec_name => $logs) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workflow Management - TTM PM Portal</title>
+    <title>Workflow Management - OTHER Section - TTM PM Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/theme.css">
@@ -90,39 +88,34 @@ foreach ($static_logs as $sec_name => $logs) {
                             <i class="fa-solid fa-clipboard-check"></i>
                         </div>
                         <div>
-                            <h2 style="margin:0; font-size:1.8rem; color:var(--text-main);">Workflow Approval Center</h2>
-                            <p style="margin:0; font-size:0.95rem; color:var(--text-sub);">ระบบจัดการและอนุมัติการตรวจสอบระบบรายเดือน (PM)</p>
+                            <h2 style="margin:0; font-size:1.8rem; color:var(--text-main);">Workflow Approval - OTHER Section</h2>
+                            <p style="margin:0; font-size:0.95rem; color:var(--text-sub);">ระบบจัดการและอนุมัติเอกสารเพิ่มเติม</p>
                         </div>
                     </div>
                     
-                    <form method="GET" class="filter-group" style="display:flex; gap:10px;">
-                        <select name="month" onchange="this.form.submit()"><?php foreach($month_names as $n=>$m) echo "<option value='$n' ".($n==$cur_m?'selected':'').">$m</option>"; ?></select>
-                        <select name="year" onchange="this.form.submit()">
-                            <?php foreach($years as $y) echo "<option value='$y' ".($y==$cur_y?'selected':'').">$y</option>"; ?>
-                        </select>
-                    </form>
+                    
                 </div>
 
                 <div class="sec-title">
-                    <i class="fa-solid fa-desktop" style="color:var(--primary)"></i> Section: ICT
+                    <i class="fa-solid fa-layer-group" style="color:var(--primary)"></i> Section: OTHER
                 </div>
 
-                <?php if(empty($wf_data['ICT'])): ?>
+                <?php if(empty($wf_data['OTHER'])): ?>
                     <div style="padding:30px; text-align:center; color:var(--text-sub); font-style:italic;">ไม่มีข้อมูลในหมวดหมู่นี้</div>
                 <?php else: ?>
                     <div class="table-responsive">
                         <table class="wf-table">
                             <thead>
                                 <tr>
-                                    <th width="25%">Log System</th>
-                                    <th width="20%">Submission Status</th>
-                                    <th width="20%">Approval Status</th>
-                                    <th width="35%">Actions</th>
+                                    <th width="22%">Page Name</th>
+                                    <th width="18%">Submission Status</th>
+                                    <th width="18%">Approval Status</th>
+                                    <th width="42%">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach($wf_data['ICT'] as $row): 
-                                    $final_link = $row['link']."?month=$cur_m&year=$cur_y";
+                                <?php foreach($wf_data['OTHER'] as $row): 
+                                    $final_link = $row['link'];
                                 ?>
                                 <tr>
                                     <td>
@@ -134,7 +127,7 @@ foreach ($static_logs as $sec_name => $logs) {
                                         <?php if($row['sub_at']): ?>
                                             <span class="badge badge-done">SUBMITTED</span>
                                             <div class="wf-info"><i class="fa-solid fa-user"></i> <?=$row['sub_by']?><br><?=date('d M Y, H:i', strtotime($row['sub_at']))?></div>
-                                            <?php if(isset($row['sub_note']) && $row['sub_note']): ?>
+                                            <?php if($row['sub_note']): ?>
                                                 <div class="comment-box">
                                                     <div class="comment-label">📝 Note:</div>
                                                     <?=htmlspecialchars($row['sub_note'])?>
@@ -148,7 +141,7 @@ foreach ($static_logs as $sec_name => $logs) {
                                         <?php if($row['app_at']): ?>
                                             <span class="badge badge-done">APPROVED</span>
                                             <div class="wf-info"><i class="fa-solid fa-user-shield"></i> <?=$row['app_by']?><br><?=date('d M Y, H:i', strtotime($row['app_at']))?></div>
-                                            <?php if(isset($row['app_comment']) && $row['app_comment']): ?>
+                                            <?php if($row['app_comment']): ?>
                                                 <div class="comment-box">
                                                     <div class="comment-label">💬 Comment:</div>
                                                     <?=htmlspecialchars($row['app_comment'])?>
@@ -185,14 +178,10 @@ foreach ($static_logs as $sec_name => $logs) {
                 <?php endif; ?>
             </div>
 
-            
-
             <div style="height: 40px;"></div>
         </div>
     </div>
 
-    <script src="../Workflow/js/workflow.js"></script> 
-    
     <!-- Modal for Note/Comment -->
     <div class="modal-overlay" id="noteModal">
         <div class="modal-content">
@@ -284,8 +273,42 @@ foreach ($static_logs as $sec_name => $logs) {
             });
         });
 
+        function handleAction(type, table, is_custom, id_val, year_val) {
+            const actionNames = {
+                'cancel_submit': 'ยกเลิกการ Submit',
+                'cancel_approve': 'ยกเลิกการ Approve'
+            };
+
+            if(!confirm(`ยืนยันการทำรายการ: ${actionNames[type]} ใช่หรือไม่?`)) return;
+            
+            let payload = { type: type, table: table, is_custom: is_custom };
+            if(is_custom === 1) {
+                payload.page_id = id_val;
+            } else {
+                payload.month = id_val;
+                payload.year = year_val;
+            }
+
+            fetch('update_workflow.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(d => {
+                if(d.success) location.reload();
+                else alert('Error: ' + d.error);
+            })
+            .catch(err => {
+                console.error('Fetch Error:', err);
+                alert('ไม่สามารถติดต่อไฟล์ update_workflow.php ได้ครับ');
+            });
+        }
+
         // Close modal when clicking outside
         document.getElementById('noteModal').addEventListener('click', function(e) {
             if(e.target === this) closeNoteModal();
         });
     </script>
+</body> 
+</html>

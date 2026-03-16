@@ -80,7 +80,10 @@ if(!isset($conn)) {
         
         <div class="nav-title">Task & Approvals</div>
         <a href="<?=$p?>Workflow/workflow_mgmt.php" class="nav-link <?=($current_page=='workflow')?'active':''?>">
-            <i class="fa-solid fa-tasks"></i> <span>Approval Center</span>
+            <i class="fa-solid fa-tasks"></i> <span>ICT Section</span>
+        </a>
+        <a href="<?=$p?>Workflow/workflow_other.php" class="nav-link <?=($current_page=='workflow')?'active':''?>">
+            <i class="fa-solid fa-tasks"></i> <span>OTHER Section</span>
         </a>
         <div class="nav-bottom">
             <a href="<?=$p?>login/logout.php" class="nav-link logout-link">

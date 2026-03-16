@@ -37,13 +37,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // สำหรับ Section OTHER (Custom Pages)
         $page_id = intval($data['page_id']);
         if ($type === 'submit') {
-            $sql = "UPDATE $table SET sub_by='$user_name', sub_at=NOW() WHERE id=$page_id";
+            $sub_note = isset($data['sub_note']) ? mysqli_real_escape_string($conn, $data['sub_note']) : '';
+            $sql = "UPDATE $table SET sub_by='$user_name', sub_at=NOW(), sub_note='$sub_note' WHERE id=$page_id";
         } elseif ($type === 'approve') {
-            $sql = "UPDATE $table SET app_by='$user_name', app_at=NOW() WHERE id=$page_id";
+            $app_comment = isset($data['app_comment']) ? mysqli_real_escape_string($conn, $data['app_comment']) : '';
+            $sql = "UPDATE $table SET app_by='$user_name', app_at=NOW(), app_comment='$app_comment' WHERE id=$page_id";
         } elseif ($type === 'cancel_submit') {
-            $sql = "UPDATE $table SET sub_by=NULL, sub_at=NULL WHERE id=$page_id";
+            $sql = "UPDATE $table SET sub_by=NULL, sub_at=NULL, sub_note=NULL WHERE id=$page_id";
         } elseif ($type === 'cancel_approve') {
-            $sql = "UPDATE $table SET app_by=NULL, app_at=NULL WHERE id=$page_id";
+            $sql = "UPDATE $table SET app_by=NULL, app_at=NULL, app_comment=NULL WHERE id=$page_id";
         }
     } else {
         // สำหรับ Section ICT (รายเดือน)
@@ -51,13 +53,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $year = intval($data['year']);
         // ใช้ last_updated = last_updated เพื่อป้องกัน ON UPDATE CURRENT_TIMESTAMP trigger
         if ($type === 'submit') {
-            $sql = "UPDATE $table SET sub_by='$user_name', sub_at=NOW(), last_updated=last_updated WHERE month=$month AND year=$year";
+            $sub_note = isset($data['sub_note']) ? mysqli_real_escape_string($conn, $data['sub_note']) : '';
+            $sql = "UPDATE $table SET sub_by='$user_name', sub_at=NOW(), sub_note='$sub_note', last_updated=last_updated WHERE month=$month AND year=$year";
         } elseif ($type === 'approve') {
-            $sql = "UPDATE $table SET app_by='$user_name', app_at=NOW(), last_updated=last_updated WHERE month=$month AND year=$year";
+            $app_comment = isset($data['app_comment']) ? mysqli_real_escape_string($conn, $data['app_comment']) : '';
+            $sql = "UPDATE $table SET app_by='$user_name', app_at=NOW(), app_comment='$app_comment', last_updated=last_updated WHERE month=$month AND year=$year";
         } elseif ($type === 'cancel_submit') {
-            $sql = "UPDATE $table SET sub_by=NULL, sub_at=NULL, last_updated=last_updated WHERE month=$month AND year=$year";
+            $sql = "UPDATE $table SET sub_by=NULL, sub_at=NULL, sub_note=NULL, last_updated=last_updated WHERE month=$month AND year=$year";
         } elseif ($type === 'cancel_approve') {
-            $sql = "UPDATE $table SET app_by=NULL, app_at=NULL, last_updated=last_updated WHERE month=$month AND year=$year";
+            $sql = "UPDATE $table SET app_by=NULL, app_at=NULL, app_comment=NULL, last_updated=last_updated WHERE month=$month AND year=$year";
         }
     }
 
