@@ -49,14 +49,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // สำหรับ Section ICT (รายเดือน)
         $month = intval($data['month']);
         $year = intval($data['year']);
+        // ใช้ last_updated = last_updated เพื่อป้องกัน ON UPDATE CURRENT_TIMESTAMP trigger
         if ($type === 'submit') {
-            $sql = "UPDATE $table SET sub_by='$user_name', sub_at=NOW() WHERE month=$month AND year=$year";
+            $sql = "UPDATE $table SET sub_by='$user_name', sub_at=NOW(), last_updated=last_updated WHERE month=$month AND year=$year";
         } elseif ($type === 'approve') {
-            $sql = "UPDATE $table SET app_by='$user_name', app_at=NOW() WHERE month=$month AND year=$year";
+            $sql = "UPDATE $table SET app_by='$user_name', app_at=NOW(), last_updated=last_updated WHERE month=$month AND year=$year";
         } elseif ($type === 'cancel_submit') {
-            $sql = "UPDATE $table SET sub_by=NULL, sub_at=NULL WHERE month=$month AND year=$year";
+            $sql = "UPDATE $table SET sub_by=NULL, sub_at=NULL, last_updated=last_updated WHERE month=$month AND year=$year";
         } elseif ($type === 'cancel_approve') {
-            $sql = "UPDATE $table SET app_by=NULL, app_at=NULL WHERE month=$month AND year=$year";
+            $sql = "UPDATE $table SET app_by=NULL, app_at=NULL, last_updated=last_updated WHERE month=$month AND year=$year";
         }
     }
 
