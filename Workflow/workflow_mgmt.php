@@ -57,19 +57,23 @@ foreach ($static_logs as $sec_name => $logs) {
     <link rel="stylesheet" href="../Workflow/css/workflow.css">
     <link rel="stylesheet" href="../Workflow/css/workflow_page.css">
     <style>
-        .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center; }
+        .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:999; align-items:center; justify-content:center; }
         .modal-overlay.active { display:flex; }
-        .modal-content { background:white; border-radius:14px; padding:30px; max-width:600px; width:90%; box-shadow:0 10px 40px rgba(0,0,0,0.2); }
-        .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-        .modal-header h3 { margin:0; font-size:1.3rem; color:var(--text-main); }
-        .modal-close { background:none; border:none; font-size:1.5rem; color:var(--text-sub); cursor:pointer; }
+        .modal-content { background:var(--bg-card); border-radius:14px; padding:30px; max-width:600px; width:90%; box-shadow:0 10px 40px rgba(0,0,0,0.4); border:1px solid var(--border); }
+        .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:15px; }
+        .modal-header h3 { margin:0; font-size:1.3rem; color:var(--text-main); font-weight:600; }
+        .modal-close { background:none; border:none; font-size:1.5rem; color:var(--text-sub); cursor:pointer; padding:0; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:6px; transition:background 0.2s; }
+        .modal-close:hover { background:rgba(79,70,229,0.1); }
         .modal-form-group { margin-bottom:15px; }
         .modal-form-group label { display:block; margin-bottom:8px; font-weight:600; color:var(--text-main); font-size:0.95rem; }
-        .modal-form-group textarea { width:100%; padding:12px 15px; border:1px solid var(--border); border-radius:8px; resize:vertical; min-height:100px; font-family:inherit; }
-        .modal-actions { display:flex; gap:10px; margin-top:25px; }
-        .modal-btn { padding:10px 20px; border-radius:8px; border:none; font-weight:600; cursor:pointer; }
+        .modal-form-group textarea { width:100%; padding:12px 15px; border:1px solid var(--border); border-radius:8px; resize:vertical; min-height:100px; font-family:inherit; background:var(--input-bg); color:var(--text-main); }
+        .modal-form-group textarea::placeholder { color:var(--text-sub); opacity:0.6; }
+        .modal-actions { display:flex; gap:10px; margin-top:25px; padding-top:15px; border-top:1px solid var(--border); }
+        .modal-btn { padding:10px 20px; border-radius:8px; border:none; font-weight:600; cursor:pointer; transition:all 0.2s; }
         .modal-btn-submit { background:var(--primary); color:white; }
+        .modal-btn-submit:hover { opacity:0.9; transform:translateY(-2px); }
         .modal-btn-cancel { background:var(--border); color:var(--text-main); }
+        .modal-btn-cancel:hover { background:rgba(79,70,229,0.1); }
         .comment-box { background:rgba(79, 70, 229, 0.05); border-left:3px solid var(--primary); padding:12px 15px; border-radius:4px; font-size:0.9rem; margin-top:8px; line-height:1.5; }
         .comment-label { font-weight:600; color:var(--text-sub); font-size:0.85rem; }
     </style>
@@ -90,7 +94,7 @@ foreach ($static_logs as $sec_name => $logs) {
                             <i class="fa-solid fa-clipboard-check"></i>
                         </div>
                         <div>
-                            <h2 style="margin:0; font-size:1.8rem; color:var(--text-main);">Workflow Approval Center</h2>
+                            <h2 style="margin:0; font-size:1.8rem; color:var(--text-main);">Workflow Approval - ICT Section</h2>
                             <p style="margin:0; font-size:0.95rem; color:var(--text-sub);">ระบบจัดการและอนุมัติการตรวจสอบระบบรายเดือน (PM)</p>
                         </div>
                     </div>

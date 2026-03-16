@@ -35,17 +35,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($is_custom === 1) {
         // สำหรับ Section OTHER (Custom Pages)
+        // ✅ ใช้ custom_pages_workflow table เพื่อเก็บ workflow data แยกต่อ month/year
         $page_id = intval($data['page_id']);
+        $month = intval($data['month'] ?? date('m'));
+        $year = intval($data['year'] ?? date('Y'));
+        
+        // ✅ ตรวจสอบว่า table มีอยู่ไหม ถ้าไม่มีให้สร้าง
+        $table_check = $conn->query("SHOW TABLES LIKE 'custom_pages_workflow'");
+        if(!$table_check || $table_check->num_rows == 0) {
+            // สร้าง table ใหม่
+            $conn->query("
+                CREATE TABLE custom_pages_workflow (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    page_id INT NOT NULL,
+                    month INT NOT NULL,
+                    year INT NOT NULL,
+                    sub_by VARCHAR(255),
+                    sub_at TIMESTAMP NULL,
+                    sub_note LONGTEXT,
+                    app_by VARCHAR(255),
+                    app_at TIMESTAMP NULL,
+                    app_comment LONGTEXT,
+                    UNIQUE KEY unique_page_month_year (page_id, month, year)
+                )
+            ");
+        }
+        
         if ($type === 'submit') {
             $sub_note = isset($data['sub_note']) ? mysqli_real_escape_string($conn, $data['sub_note']) : '';
-            $sql = "UPDATE $table SET sub_by='$user_name', sub_at=NOW(), sub_note='$sub_note' WHERE id=$page_id";
+            $workflow_table = 'custom_pages_workflow';
+            
+            // ✅ ดึง page_name จาก custom_pages
+            $page_info_q = $conn->query("SELECT page_name FROM custom_pages WHERE id=$page_id LIMIT 1");
+            $page_name = '';
+            if($page_info_q && $page_info_q->num_rows > 0) {
+                $page_info = $page_info_q->fetch_assoc();
+                $page_name = mysqli_real_escape_string($conn, $page_info['page_name']);
+            }
+            
+            // ตรวจสอบ record นี้มีหรือไม่
+            $check = $conn->query("SELECT * FROM $workflow_table WHERE page_id=$page_id AND month=$month AND year=$year LIMIT 1");
+            
+            if($check && $check->num_rows > 0) {
+                // มี record แล้ว ให้ update
+                $sql = "UPDATE $workflow_table SET page_name='$page_name', sub_by='$user_name', sub_at=NOW(), sub_note='$sub_note' 
+                        WHERE page_id=$page_id AND month=$month AND year=$year";
+            } else {
+                // ยังไม่มี record ให้ insert
+                $sql = "INSERT INTO $workflow_table (page_id, page_name, month, year, sub_by, sub_at, sub_note) 
+                        VALUES ($page_id, '$page_name', $month, $year, '$user_name', NOW(), '$sub_note')";
+            }
         } elseif ($type === 'approve') {
             $app_comment = isset($data['app_comment']) ? mysqli_real_escape_string($conn, $data['app_comment']) : '';
-            $sql = "UPDATE $table SET app_by='$user_name', app_at=NOW(), app_comment='$app_comment' WHERE id=$page_id";
+            $workflow_table = 'custom_pages_workflow';
+            $sql = "UPDATE $workflow_table SET app_by='$user_name', app_at=NOW(), app_comment='$app_comment' 
+                    WHERE page_id=$page_id AND month=$month AND year=$year";
         } elseif ($type === 'cancel_submit') {
-            $sql = "UPDATE $table SET sub_by=NULL, sub_at=NULL, sub_note=NULL WHERE id=$page_id";
+            $workflow_table = 'custom_pages_workflow';
+            // ✅ ถ้าเป็น cancel_submit เลย ให้ DELETE เลย (ยังไม่ approve)
+            $check_app = $conn->query("SELECT app_by FROM $workflow_table WHERE page_id=$page_id AND month=$month AND year=$year LIMIT 1");
+            if($check_app && $check_app->num_rows > 0) {
+                $app_data = $check_app->fetch_assoc();
+                if($app_data['app_by'] == null) {
+                    // ยังไม่ approve ให้ DELETE record เลย
+                    $sql = "DELETE FROM $workflow_table WHERE page_id=$page_id AND month=$month AND year=$year";
+                } else {
+                    // มี approve แล้ว ให้ SET sub เป็น NULL เท่านั้น
+                    $sql = "UPDATE $workflow_table SET sub_by=NULL, sub_at=NULL, sub_note=NULL 
+                            WHERE page_id=$page_id AND month=$month AND year=$year";
+                }
+            } else {
+                $sql = "";
+            }
         } elseif ($type === 'cancel_approve') {
-            $sql = "UPDATE $table SET app_by=NULL, app_at=NULL, app_comment=NULL WHERE id=$page_id";
+            $workflow_table = 'custom_pages_workflow';
+            // ✅ ยกเลิก approve ให้ SET app เป็น NULL (keep submit data)
+            $sql = "UPDATE $workflow_table SET app_by=NULL, app_at=NULL, app_comment=NULL 
+                    WHERE page_id=$page_id AND month=$month AND year=$year";
         }
     } else {
         // สำหรับ Section ICT (รายเดือน)

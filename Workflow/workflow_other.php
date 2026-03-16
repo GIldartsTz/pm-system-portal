@@ -16,6 +16,14 @@ if (!isset($_SESSION['user_id'])) { header("Location: {$base_path}login/login.ph
 
 $is_admin = (isset($_SESSION['role']) && $_SESSION['role'] === 'admin');
 
+// ✅ เพิ่ม Month/Year Filter
+$cur_m = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
+$cur_y = isset($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
+$month_names = [1=>"Jan", 2=>"Feb", 3=>"Mar", 4=>"Apr", 5=>"May", 6=>"June", 7=>"Jul", 8=>"Aug", 9=>"Sep", 10=>"Oct", 11=>"Nov", 12=>"Dec"];
+
+// ✅ สร้างตัวเลือกปี 2026 - 2030
+$years = range(2026, 2030);
+
 $wf_data = ['OTHER' => []];
 
 $check_cp = $conn->query("SHOW TABLES LIKE 'custom_pages'");
@@ -23,20 +31,45 @@ if($check_cp && $check_cp->num_rows > 0) {
     $cp_q = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
     if($cp_q && $cp_q->num_rows > 0){
         while($cp = $cp_q->fetch_assoc()){
+            // ✅ Filter by month/year - Query จาก custom_pages_workflow
+            $check_query = $conn->query("
+                SELECT page_name, sub_by, sub_at, app_by, app_at, sub_note, app_comment 
+                FROM custom_pages_workflow 
+                WHERE page_id={$cp['id']} AND month=$cur_m AND year=$cur_y 
+                LIMIT 1
+            ");
+            
+            if($check_query && $check_query->num_rows > 0) {
+                $row_data = $check_query->fetch_assoc();
+                $display_page_name = $row_data['page_name'] ?? $cp['page_name'] ?? 'Unknown Page';
+            } else {
+                // ถ้ายังไม่มีการบันทึกสำหรับ month/year นี้ ให้แสดงเป็น empty
+                $display_page_name = $cp['page_name'] ?? 'Unknown Page';
+                $row_data = [
+                    'sub_by' => null,
+                    'sub_at' => null,
+                    'app_by' => null,
+                    'app_at' => null,
+                    'sub_note' => null,
+                    'app_comment' => null
+                ];
+            }
+            
             $wf_data['OTHER'][] = [
-                'name' => $cp['page_name'] ?? 'Unknown Page',
-                'table' => 'custom_pages',
+                'name' => $display_page_name,
+                'table' => 'custom_pages_workflow',
                 'link' => $base_path.'custom_page_view.php?id='.($cp['id'] ?? 1),
                 'icon' => 'fa-file-lines',
                 'is_custom' => 1,
                 'id_val' => $cp['id'] ?? 1,
-                'year_val' => 0,
-                'sub_by' => $cp['sub_by'] ?? null,
-                'sub_at' => $cp['sub_at'] ?? null,
-                'app_by' => $cp['app_by'] ?? null,
-                'app_at' => $cp['app_at'] ?? null,
-                'sub_note' => $cp['sub_note'] ?? null,
-                'app_comment' => $cp['app_comment'] ?? null
+                'month_val' => $cur_m,
+                'year_val' => $cur_y,
+                'sub_by' => $row_data['sub_by'] ?? null,
+                'sub_at' => $row_data['sub_at'] ?? null,
+                'app_by' => $row_data['app_by'] ?? null,
+                'app_at' => $row_data['app_at'] ?? null,
+                'sub_note' => $row_data['sub_note'] ?? null,
+                'app_comment' => $row_data['app_comment'] ?? null
             ];
         }
     }
@@ -55,19 +88,23 @@ if($check_cp && $check_cp->num_rows > 0) {
     <link rel="stylesheet" href="../Workflow/css/workflow.css">
     <link rel="stylesheet" href="../Workflow/css/workflow_page.css">
     <style>
-        .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center; }
+        .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:999; align-items:center; justify-content:center; }
         .modal-overlay.active { display:flex; }
-        .modal-content { background:white; border-radius:14px; padding:30px; max-width:600px; width:90%; box-shadow:0 10px 40px rgba(0,0,0,0.2); }
-        .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-        .modal-header h3 { margin:0; font-size:1.3rem; color:var(--text-main); }
-        .modal-close { background:none; border:none; font-size:1.5rem; color:var(--text-sub); cursor:pointer; }
+        .modal-content { background:var(--bg-card); border-radius:14px; padding:30px; max-width:600px; width:90%; box-shadow:0 10px 40px rgba(0,0,0,0.4); border:1px solid var(--border); }
+        .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:15px; }
+        .modal-header h3 { margin:0; font-size:1.3rem; color:var(--text-main); font-weight:600; }
+        .modal-close { background:none; border:none; font-size:1.5rem; color:var(--text-sub); cursor:pointer; padding:0; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:6px; transition:background 0.2s; }
+        .modal-close:hover { background:rgba(79,70,229,0.1); }
         .modal-form-group { margin-bottom:15px; }
         .modal-form-group label { display:block; margin-bottom:8px; font-weight:600; color:var(--text-main); font-size:0.95rem; }
-        .modal-form-group textarea { width:100%; padding:12px 15px; border:1px solid var(--border); border-radius:8px; resize:vertical; min-height:100px; font-family:inherit; }
-        .modal-actions { display:flex; gap:10px; margin-top:25px; }
-        .modal-btn { padding:10px 20px; border-radius:8px; border:none; font-weight:600; cursor:pointer; }
+        .modal-form-group textarea { width:100%; padding:12px 15px; border:1px solid var(--border); border-radius:8px; resize:vertical; min-height:100px; font-family:inherit; background:var(--input-bg); color:var(--text-main); }
+        .modal-form-group textarea::placeholder { color:var(--text-sub); opacity:0.6; }
+        .modal-actions { display:flex; gap:10px; margin-top:25px; padding-top:15px; border-top:1px solid var(--border); }
+        .modal-btn { padding:10px 20px; border-radius:8px; border:none; font-weight:600; cursor:pointer; transition:all 0.2s; }
         .modal-btn-submit { background:var(--primary); color:white; }
+        .modal-btn-submit:hover { opacity:0.9; transform:translateY(-2px); }
         .modal-btn-cancel { background:var(--border); color:var(--text-main); }
+        .modal-btn-cancel:hover { background:rgba(79,70,229,0.1); }
         .comment-box { background:rgba(79, 70, 229, 0.05); border-left:3px solid var(--primary); padding:12px 15px; border-radius:4px; font-size:0.9rem; margin-top:8px; line-height:1.5; }
         .comment-label { font-weight:600; color:var(--text-sub); font-size:0.85rem; }
     </style>
@@ -93,7 +130,14 @@ if($check_cp && $check_cp->num_rows > 0) {
                         </div>
                     </div>
                     
-                    
+                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                        <form method="GET" class="filter-group" style="display:flex; gap:10px;">
+                            <select name="month" onchange="this.form.submit()" style="padding:8px 15px; border-radius:8px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main); font-weight:600;"><?php foreach($month_names as $n=>$m) echo "<option value='$n' ".($n==$cur_m?'selected':'').">$m</option>"; ?></select>
+                            <select name="year" onchange="this.form.submit()" style="padding:8px 15px; border-radius:8px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main); font-weight:600;">
+                                <?php foreach($years as $y) echo "<option value='$y' ".($y==$cur_y?'selected':'').">$y</option>"; ?>
+                            </select>
+                        </form>
+                    </div>
                 </div>
 
                 <div class="sec-title">
@@ -156,15 +200,15 @@ if($check_cp && $check_cp->num_rows > 0) {
                                             <?php if($row['app_at']): ?>
                                                 <button class="btn-action btn-success" disabled><i class="fa-solid fa-lock"></i> Submitted</button>
                                             <?php elseif($row['sub_at']): ?>
-                                                <button class="btn-action btn-danger" onclick="handleAction('cancel_submit', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-rotate-left"></i> ยกเลิก Submit</button>
+                                                <button class="btn-action btn-danger" onclick="handleAction('cancel_submit', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['month_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-rotate-left"></i> ยกเลิก Submit</button>
                                             <?php else: ?>
-                                                <button class="btn-action btn-warning" onclick="openNoteModal('submit', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-paper-plane"></i> Submit</button>
+                                                <button class="btn-action btn-warning" onclick="openNoteModal('submit', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['month_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-paper-plane"></i> Submit</button>
                                             <?php endif; ?>
 
                                             <?php if($row['app_at']): ?>
-                                                <button class="btn-action btn-danger" onclick="handleAction('cancel_approve', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-rotate-left"></i> ยกเลิก</button>
+                                                <button class="btn-action btn-danger" onclick="handleAction('cancel_approve', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['month_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-rotate-left"></i> ยกเลิก</button>
                                             <?php elseif($row['sub_at']): ?>
-                                                <button class="btn-action btn-warning" onclick="openNoteModal('approve', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-stamp"></i> Approve</button>
+                                                <button class="btn-action btn-warning" onclick="openNoteModal('approve', '<?=$row['table']?>', <?=$row['is_custom']?>, <?=$row['id_val']?>, <?=$row['month_val']?>, <?=$row['year_val']?>)"><i class="fa-solid fa-stamp"></i> Approve</button>
                                             <?php else: ?>
                                                 <button class="btn-action btn-disabled" disabled><i class="fa-solid fa-stamp"></i> Approve</button>
                                             <?php endif; ?>
@@ -205,8 +249,8 @@ if($check_cp && $check_cp->num_rows > 0) {
     <script>
         let currentAction = {};
 
-        function openNoteModal(type, table, is_custom, id_val, year_val) {
-            currentAction = { type, table, is_custom, id_val, year_val };
+        function openNoteModal(type, table, is_custom, id_val, month_val, year_val) {
+            currentAction = { type, table, is_custom, id_val, month_val, year_val };
             
             const modal = document.getElementById('noteModal');
             const title = document.getElementById('modalTitle');
@@ -241,6 +285,8 @@ if($check_cp && $check_cp->num_rows > 0) {
             
             if(currentAction.is_custom === 1) {
                 payload.page_id = currentAction.id_val;
+                payload.month = currentAction.month_val;
+                payload.year = currentAction.year_val;
             } else {
                 payload.month = currentAction.id_val;
                 payload.year = currentAction.year_val;
@@ -273,7 +319,7 @@ if($check_cp && $check_cp->num_rows > 0) {
             });
         });
 
-        function handleAction(type, table, is_custom, id_val, year_val) {
+        function handleAction(type, table, is_custom, id_val, month_val, year_val) {
             const actionNames = {
                 'cancel_submit': 'ยกเลิกการ Submit',
                 'cancel_approve': 'ยกเลิกการ Approve'
@@ -284,6 +330,8 @@ if($check_cp && $check_cp->num_rows > 0) {
             let payload = { type: type, table: table, is_custom: is_custom };
             if(is_custom === 1) {
                 payload.page_id = id_val;
+                payload.month = month_val;
+                payload.year = year_val;
             } else {
                 payload.month = id_val;
                 payload.year = year_val;
