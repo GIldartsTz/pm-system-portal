@@ -47,9 +47,43 @@
             padding: 12px;
             border-radius: 8px;
             border: 1px solid var(--border);
-            background: white;
+            background: var(--bg-card);
+            color: var(--text-main);
             font-family: inherit;
             outline: none;
+        }
+
+        /* File input dark mode fix */
+        input[type="file"] {
+            background: var(--bg-card);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            width: 100%;
+            font-family: inherit;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+        input[type="file"]::file-selector-button {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--hover);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: all 0.2s;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background: var(--primary-soft);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        [data-theme="dark"] input[type="file"] {
+            color: var(--text-main);
         }
 
         .btn-upload {
