@@ -41,7 +41,7 @@
 - **Status Tracking:** แสดง Submission Status และ Approval Status แบบ Real-time
 - **Timestamp แยกกัน:** เวลา Submit/Approve (`sub_at`, `app_at`) บันทึกแยกจากเวลาบันทึกข้อมูล (`last_updated`)
 
-![Workflow Approval Center](screenshots/workflow.png)
+![Workflow Approval Center](screenshots/Workflow-Approval-Center.png)
 
 ### 📁 4. Custom Document Pages
 หน้าจอสำหรับจัดเก็บเอกสารดิจิทัล (PDF/รูปภาพ) แยกตามหน้าที่ผู้ดูแลระบบกำหนด
@@ -50,7 +50,7 @@
 - **File Management:** ดู, ดาวน์โหลด และลบไฟล์ได้จากหน้าเดียว
 - **Dynamic Pages:** Admin สร้างหน้าใหม่ได้ไม่จำกัดผ่าน System Config
 
-![Custom Document Page](screenshots/custom_page.png)
+![Custom Document Page](screenshots/Custom-Document-Page.png)
 
 ---
 
