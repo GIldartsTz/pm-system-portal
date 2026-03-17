@@ -82,7 +82,7 @@ if(!isset($conn)) {
         <a href="<?=$p?>Workflow/workflow_mgmt.php" class="nav-link <?=($current_page=='workflow')?'active':''?>">
             <i class="fa-solid fa-tasks"></i> <span>ICT Section</span>
         </a>
-        <a href="<?=$p?>Workflow/workflow_other.php" class="nav-link <?=($current_page=='workflow')?'active':''?>">
+        <a href="<?=$p?>Workflow/workflow_other.php" class="nav-link <?=($current_page=='workflow_other')?'active':''?>">
             <i class="fa-solid fa-tasks"></i> <span>OTHER Section</span>
         </a>
         <div class="nav-bottom">
