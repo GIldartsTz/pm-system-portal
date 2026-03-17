@@ -41,6 +41,8 @@
 
     --row-hover-bg: #312e81;  
     --row-hover-text: #e0e7ff; 
+
+    color-scheme: dark;
 }
 
 body {
