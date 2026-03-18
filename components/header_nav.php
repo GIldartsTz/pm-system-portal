@@ -85,6 +85,9 @@ if(!isset($conn)) {
         <a href="<?=$p?>Workflow/workflow_other.php" class="nav-link <?=($current_page=='workflow_other')?'active':''?>">
             <i class="fa-solid fa-tasks"></i> <span>OTHER Section</span>
         </a>
+        <a href="<?=$p?>Workflow/comment_history.php" class="nav-link <?=($current_page=='comment_history')?'active':''?>">
+            <i class="fa-solid fa-clock-rotate-left"></i> <span>Comment History</span>
+        </a>
         <div class="nav-bottom">
             <a href="<?=$p?>login/logout.php" class="nav-link logout-link">
                 <i class="fa-solid fa-right-from-bracket"></i>

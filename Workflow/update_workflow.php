@@ -131,7 +131,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    // ดึง log_name สำหรับ ICT logs
+    $log_names_map = [
+        'server_logs'   => 'Server Logs',
+        'network_logs'  => 'Network Logs',
+        'backup_logs'   => 'Backup Logs',
+        'hardware_logs' => 'Hardware Logs',
+        'software_logs' => 'Software Logs',
+    ];
+
+    $hist_month = isset($month) ? (int)$month : (int)date('m');
+    $hist_year  = isset($year)  ? (int)$year  : (int)date('Y');
+
+    // ✅ ดึงชื่อก่อน run SQL เสมอ (เพราะ cancel_submit จะ DELETE record ใน workflow table)
+    if ($is_custom === 1) {
+        // ดึงจาก custom_pages (ตารางหลัก) ไม่ใช่ custom_pages_workflow
+        $pname_q = $conn->query("SELECT page_name FROM custom_pages WHERE id=$page_id LIMIT 1");
+        $hist_log_name = ($pname_q && $pname_q->num_rows > 0) ? $pname_q->fetch_assoc()['page_name'] : "Custom Page #$page_id";
+        $hist_table = 'custom_pages_workflow';
+    } else {
+        $hist_log_name = $log_names_map[$table] ?? $table;
+        $hist_table = $table;
+    }
+
     if ($sql != "" && $conn->query($sql)) {
+        // ✅ บันทึก Comment History ทุกครั้งที่มีการ action
+
+        // กำหนด comment text ตาม action type
+        $hist_comment = '';
+        if ($type === 'submit') {
+            $hist_comment = isset($data['sub_note']) ? $data['sub_note'] : '';
+        } elseif ($type === 'approve') {
+            $hist_comment = isset($data['app_comment']) ? $data['app_comment'] : '';
+        }
+
+        $hist_table_esc   = mysqli_real_escape_string($conn, $hist_table);
+        $hist_log_esc     = mysqli_real_escape_string($conn, $hist_log_name);
+        $hist_type_esc    = mysqli_real_escape_string($conn, $type);
+        $hist_comment_esc = mysqli_real_escape_string($conn, $hist_comment);
+        $hist_user_esc    = mysqli_real_escape_string($conn, $user_name);
+
+        $conn->query("
+            INSERT INTO workflow_comment_history 
+                (log_table, log_name, month, year, action_type, comment_text, done_by)
+            VALUES 
+                ('$hist_table_esc', '$hist_log_esc', $hist_month, $hist_year, '$hist_type_esc', '$hist_comment_esc', '$hist_user_esc')
+        ");
+
         echo json_encode(['success' => true]);
     } else {
         echo json_encode(['success' => false, 'error' => $conn->error]);
