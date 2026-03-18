@@ -138,8 +138,7 @@ $custom_pages = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
     </header>
     <div class="main">
         <div class="container">
-            <?php if($msg): ?><div class="alert alert-success"><i class="fa-solid fa-check-circle"></i> <?=$msg?></div><?php endif; ?>
-            <?php if($error): ?><div class="alert alert-error"><i class="fa-solid fa-circle-exclamation"></i> <?=$error?></div><?php endif; ?>
+
 
             <!-- อุปกรณ์ -->
             <div class="card">
@@ -249,5 +248,50 @@ $custom_pages = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
         </div>
     </div>
     <script src="js/manage_config.js"></script>
+
+    <!-- ── Toast notification ───────────────────────── -->
+    <div id="toast" style="
+        position:fixed; bottom:26px; right:26px;
+        background:#1e1e1e; color:#fff;
+        padding:13px 20px; border-radius:12px;
+        font-size:.88rem; font-weight:600;
+        display:flex; align-items:center; gap:10px;
+        box-shadow:0 8px 30px rgba(0,0,0,.3);
+        transform:translateY(80px); opacity:0;
+        transition:all .35s cubic-bezier(.34,1.56,.64,1);
+        z-index:10000; pointer-events:none;
+        max-width:360px; word-break:break-word;
+    "></div>
+
+    <script>
+        function showToast(msg, type) {
+            var t = document.getElementById('toast');
+            t.innerHTML = msg;
+            t.style.borderLeft = type === 'ok'
+                ? '4px solid #10b981'
+                : type === 'warn'
+                    ? '4px solid #f59e0b'
+                    : '4px solid #ef4444';
+            t.style.transform = 'translateY(0)';
+            t.style.opacity   = '1';
+            clearTimeout(t._timer);
+            t._timer = setTimeout(function () {
+                t.style.transform = 'translateY(80px)';
+                t.style.opacity   = '0';
+            }, 3800);
+        }
+
+        <?php if ($msg): ?>
+        window.addEventListener('DOMContentLoaded', function () {
+            var m = '<?= addslashes(htmlspecialchars($msg)) ?>';
+            var type = (m.indexOf('🗑️') !== -1) ? 'warn' : 'ok';
+            showToast(m, type);
+        });
+        <?php elseif ($error): ?>
+        window.addEventListener('DOMContentLoaded', function () {
+            showToast('<?= addslashes(htmlspecialchars($error)) ?>', 'err');
+        });
+        <?php endif; ?>
+    </script>
 </body>
 </html>
