@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 18, 2026 at 04:43 AM
+-- Generation Time: Mar 18, 2026 at 05:17 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -10206,7 +10206,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `password`, `fullname`, `role`, `last_login`) VALUES
 (1, 'admin', '$2y$10$GEnpq6K6Lfmp7W2KzSXhSe6rZNU9xi7edYVA4gkTO3y3BIJPfwegu', 'Administrator', 'admin', '2026-03-11 00:07:47'),
 (2, 'Staff', '$2y$10$787tJmEqF7cYxFU7pRQCoOZgILtz/CWvXNa4u8ocTG/n9ie92ccJy', 'ICT Staff', 'staff', '2026-03-17 23:49:57'),
-(5, 'Aekkarat', '$2y$10$e8yKVMJNyhyZq93bk.GRleltpENK2An7//gCf7hFO03V/1LnCaL8y', 'Aekkarat Mantati', 'admin', '2026-03-18 10:41:07'),
+(5, 'Aekkarat', '$2y$10$e8yKVMJNyhyZq93bk.GRleltpENK2An7//gCf7hFO03V/1LnCaL8y', 'Aekkarat Mantati', 'admin', '2026-03-18 11:17:37'),
 (10, 'juju', '$2y$10$JEynmdI0w2Tvtnma7/.Gf.HK/IIaIPpZ/3PLChYX7IFeV8cT1X9Ii', 'jujuju', 'staff', '2026-03-17 13:57:17');
 
 -- --------------------------------------------------------
@@ -10277,7 +10277,8 @@ ALTER TABLE `custom_page_files`
 -- Indexes for table `hardware_logs`
 --
 ALTER TABLE `hardware_logs`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_hardware_eq` (`equipment_name`);
 
 --
 -- Indexes for table `master_equipment`
@@ -10316,7 +10317,8 @@ ALTER TABLE `server_logs`
 -- Indexes for table `software_logs`
 --
 ALTER TABLE `software_logs`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_software_eq` (`equipment_name`);
 
 --
 -- Indexes for table `users`
@@ -10346,31 +10348,31 @@ ALTER TABLE `backup_logs`
 -- AUTO_INCREMENT for table `custom_pages`
 --
 ALTER TABLE `custom_pages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `custom_pages_workflow`
 --
 ALTER TABLE `custom_pages_workflow`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `custom_page_files`
 --
 ALTER TABLE `custom_page_files`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
 
 --
 -- AUTO_INCREMENT for table `hardware_logs`
 --
 ALTER TABLE `hardware_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=656;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=668;
 
 --
 -- AUTO_INCREMENT for table `master_equipment`
 --
 ALTER TABLE `master_equipment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=402;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=403;
 
 --
 -- AUTO_INCREMENT for table `master_tasks`
@@ -10412,7 +10414,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `workflow_comment_history`
 --
 ALTER TABLE `workflow_comment_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
 
 --
 -- Constraints for dumped tables
@@ -10425,10 +10427,22 @@ ALTER TABLE `backup_logs`
   ADD CONSTRAINT `fk_backup_eq` FOREIGN KEY (`equipment_name`) REFERENCES `master_equipment` (`equipment_name`) ON UPDATE CASCADE;
 
 --
+-- Constraints for table `custom_pages_workflow`
+--
+ALTER TABLE `custom_pages_workflow`
+  ADD CONSTRAINT `fk_cpw_page` FOREIGN KEY (`page_id`) REFERENCES `custom_pages` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `custom_page_files`
 --
 ALTER TABLE `custom_page_files`
   ADD CONSTRAINT `custom_page_files_ibfk_1` FOREIGN KEY (`page_id`) REFERENCES `custom_pages` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `hardware_logs`
+--
+ALTER TABLE `hardware_logs`
+  ADD CONSTRAINT `fk_hardware_eq` FOREIGN KEY (`equipment_name`) REFERENCES `master_equipment` (`equipment_name`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `network_logs`
@@ -10441,6 +10455,12 @@ ALTER TABLE `network_logs`
 --
 ALTER TABLE `server_logs`
   ADD CONSTRAINT `fk_server_eq` FOREIGN KEY (`equipment_name`) REFERENCES `master_equipment` (`equipment_name`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `software_logs`
+--
+ALTER TABLE `software_logs`
+  ADD CONSTRAINT `fk_software_eq` FOREIGN KEY (`equipment_name`) REFERENCES `master_equipment` (`equipment_name`) ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
