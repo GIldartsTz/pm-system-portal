@@ -22,7 +22,7 @@ if (isset($_POST['upload'])) {
         if (!is_dir('uploads')) { mkdir('uploads', 0777, true); }
         if (move_uploaded_file($file['tmp_name'], "uploads/" . $new_name)) {
             $conn->query("INSERT INTO custom_page_files (page_id, report_date, file_path, file_type) VALUES ($page_id, '$date', '$new_name', '$ext')");
-            $msg = "✅ อัปโหลดสำเร็จ!";
+            $msg = " อัปโหลดสำเร็จ!";
         } else { $error = "❌ อัปโหลดไม่สำเร็จ"; }
     }
 }
@@ -50,6 +50,41 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
     <link rel="stylesheet" href="../css/theme.css">
     <link rel="stylesheet" href="../Custom_page/css/custom.css">
     <link rel="stylesheet" href="../Custom_page/css/custom_page.css">
+    <style>
+        /* ── Delete confirm modal ───────────────────────── */
+        .del-overlay {
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,0.6); z-index:9999;
+            align-items:center; justify-content:center;
+            backdrop-filter:blur(3px);
+        }
+        .del-overlay.active { display:flex; }
+        .del-box {
+            background:var(--bg-card); border-radius:16px;
+            padding:32px 28px 26px; max-width:420px; width:92%;
+            box-shadow:0 20px 60px rgba(0,0,0,0.3);
+            border:1px solid var(--border); text-align:center;
+        }
+        .del-icon-wrap {
+            width:58px; height:58px; border-radius:50%;
+            background:#fee2e2; color:#ef4444;
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.7rem; margin:0 auto 16px;
+        }
+        .del-title { margin:0 0 8px; font-size:1.15rem; font-weight:800; color:var(--text-main); }
+        .del-sub   { margin:0 0 24px; font-size:0.87rem; color:var(--text-sub); line-height:1.65; }
+        .del-sub strong { color:var(--text-main); }
+        .del-btns  { display:flex; gap:10px; justify-content:center; }
+        .dbtn {
+            padding:10px 24px; border-radius:10px; border:none;
+            font-weight:700; font-size:0.88rem; cursor:pointer;
+            transition:all 0.16s; display:inline-flex; align-items:center; gap:7px;
+        }
+        .dbtn-cancel { background:var(--border); color:var(--text-main); }
+        .dbtn-cancel:hover { background:rgba(79,70,229,0.1); }
+        .dbtn-delete { background:linear-gradient(135deg,#ef4444,#b91c1c); color:#fff; }
+        .dbtn-delete:hover { opacity:.88; transform:translateY(-1px); }
+    </style>
 </head>
 <body>
     <?php 
@@ -117,9 +152,14 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
                                     </td>
                                     <td><span class="badge-type"><?=strtoupper($file_ext)?></span></td>
                                     <td align="center">
-                                        <a href="?id=<?=$page_id?>&del_file=<?=$f['id']?>" class="del-btn" style="color: #ef4444; font-size: 1.2rem;" onclick="return confirm('คุณต้องการลบไฟล์นี้ใช่หรือไม่?')">
+                                        <button class="del-btn" style="background:none;border:none;color:#ef4444;font-size:1.2rem;cursor:pointer;"
+                                            onclick="openDelModal(
+                                                '?id=<?=$page_id?>&del_file=<?=$f['id']?>',
+                                                'ยืนยันการลบไฟล์',
+                                                'ต้องการลบไฟล์ <strong><?=htmlspecialchars($display_name)?></strong> ใช่ไหม?<br><span style=\'color:#ef4444;font-size:.81rem;\'>ไฟล์จะหายถาวร ไม่สามารถกู้คืนได้</span>'
+                                            )">
                                             <i class="fa-solid fa-trash-can"></i>
-                                        </a>
+                                        </button>
                                     </td>
                                 </tr>
                                 <?php endwhile; ?>
@@ -137,6 +177,24 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
                 </div> 
             </div>
             <div style="height: 40px;"></div>
+        </div>
+    </div>
+
+
+    <!-- ── Delete Confirm Modal ─────────────────────────── -->
+    <div class="del-overlay" id="delModal">
+        <div class="del-box">
+            <div class="del-icon-wrap"><i class="fa-solid fa-trash-can"></i></div>
+            <h3 class="del-title" id="delTitle">ยืนยันการลบ</h3>
+            <p class="del-sub" id="delSub"></p>
+            <div class="del-btns">
+                <button class="dbtn dbtn-cancel" onclick="closeDelModal()">
+                    <i class="fa-solid fa-xmark"></i> ยกเลิก
+                </button>
+                <a class="dbtn dbtn-delete" id="delConfirmBtn" href="#">
+                    <i class="fa-solid fa-trash-can"></i> ลบเลย
+                </a>
+            </div>
         </div>
     </div>
 
@@ -185,6 +243,20 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
             showToast('❌ <?= addslashes(htmlspecialchars($error)) ?>', 'err');
         });
         <?php endif; ?>
+
+        // ── Delete confirm modal ──────────────────────────
+        function openDelModal(href, title, sub) {
+            document.getElementById('delTitle').textContent = title;
+            document.getElementById('delSub').innerHTML    = sub;
+            document.getElementById('delConfirmBtn').href  = href;
+            document.getElementById('delModal').classList.add('active');
+        }
+        function closeDelModal() {
+            document.getElementById('delModal').classList.remove('active');
+        }
+        document.getElementById('delModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDelModal();
+        });
     </script>
 </body>
 </html>

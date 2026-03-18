@@ -126,6 +126,41 @@ $custom_pages = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
     <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/config.css">
     <link rel="stylesheet" href="css/layout.css">
+    <style>
+        /* ── Delete confirm modal ───────────────────────── */
+        .del-overlay {
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,0.6); z-index:9999;
+            align-items:center; justify-content:center;
+            backdrop-filter:blur(3px);
+        }
+        .del-overlay.active { display:flex; }
+        .del-box {
+            background:var(--bg-card); border-radius:16px;
+            padding:32px 28px 26px; max-width:420px; width:92%;
+            box-shadow:0 20px 60px rgba(0,0,0,0.3);
+            border:1px solid var(--border); text-align:center;
+        }
+        .del-icon-wrap {
+            width:58px; height:58px; border-radius:50%;
+            background:#fee2e2; color:#ef4444;
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.7rem; margin:0 auto 16px;
+        }
+        .del-title { margin:0 0 8px; font-size:1.15rem; font-weight:800; color:var(--text-main); }
+        .del-sub   { margin:0 0 24px; font-size:0.87rem; color:var(--text-sub); line-height:1.65; }
+        .del-sub strong { color:var(--text-main); }
+        .del-btns  { display:flex; gap:10px; justify-content:center; }
+        .dbtn {
+            padding:10px 24px; border-radius:10px; border:none;
+            font-weight:700; font-size:0.88rem; cursor:pointer;
+            transition:all 0.16s; display:inline-flex; align-items:center; gap:7px;
+        }
+        .dbtn-cancel { background:var(--border); color:var(--text-main); }
+        .dbtn-cancel:hover { background:rgba(79,70,229,0.1); }
+        .dbtn-delete { background:linear-gradient(135deg,#ef4444,#b91c1c); color:#fff; }
+        .dbtn-delete:hover { opacity:.88; transform:translateY(-1px); }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -163,7 +198,12 @@ $custom_pages = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
                             <tr data-sys="<?=$row['system_type']?>">
                                 <td><span class="badge bg-<?=$row['system_type']?>"><?=$row['system_type']?></span></td>
                                 <td><?=$row['equipment_name']?></td>
-                                <td style="text-align:center;"><a href="?del_eq=<?=$row['id']?>" class="del-btn" onclick="return confirm('ลบ?')"><i class="fa-solid fa-trash"></i></a></td>
+                                <td style="text-align:center;"><button class="del-btn" style="background:none;border:none;cursor:pointer;"
+                                onclick="openDelModal(
+                                    '?del_eq=<?=$row['id']?>',
+                                    'ยืนยันการลบอุปกรณ์',
+                                    'ต้องการลบ <strong><?=htmlspecialchars($row['equipment_name'])?></strong> ใช่ไหม?<br><span style=\'color:#ef4444;font-size:.81rem;\'>ข้อมูล Log ทั้งหมดของอุปกรณ์นี้จะถูกลบด้วย</span>'
+                                )"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button></td>
                             </tr>
                             <?php endwhile; else: ?>
                             <tr><td colspan="3" style="text-align:center;padding:20px;">ไม่พบข้อมูล</td></tr>
@@ -208,7 +248,12 @@ $custom_pages = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
                                 <td><?=$t['task_label']?></td>
                                 <td><span style="font-size:0.8rem;color:var(--text-sub)">[<?=$t['column_name']?>]</span></td>
                                 <td><b><?=$t['frequency']?></b></td>
-                                <td style="text-align:center;"><a href="?del_task=<?=$t['id']?>" class="del-btn" onclick="return confirm('ลบ?')"><i class="fa-solid fa-trash"></i></a></td>
+                                <td style="text-align:center;"><button class="del-btn" style="background:none;border:none;cursor:pointer;"
+                                onclick="openDelModal(
+                                    '?del_task=<?=$t['id']?>',
+                                    'ยืนยันการลบหัวข้อตรวจ',
+                                    'ต้องการลบหัวข้อ <strong><?=htmlspecialchars($t['task_label'])?></strong> ใช่ไหม?<br><span style=\'color:#ef4444;font-size:.81rem;\'>คอลัมน์ [<?=$t['column_name']?>] จะถูกลบออกจากตารางด้วย</span>'
+                                )"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button></td>
                             </tr>
                             <?php endwhile; else: ?>
                             <tr><td colspan="5" style="text-align:center;padding:20px;">ยังไม่มีหัวข้อตรวจ</td></tr>
@@ -236,7 +281,12 @@ $custom_pages = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
                                 <td><i class="fa-solid fa-file-lines"></i> <?=$p['page_name']?></td>
                                 <td align="center">
                                     <button onclick="editPage(<?=$p['id']?>, '<?=addslashes($p['page_name'])?>')" class="edit-btn" style="border:none;background:none;color:#f59e0b;cursor:pointer;margin-right:10px;"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    <a href="?del_page=<?=$p['id']?>" class="del-btn" onclick="return confirm('ลบหน้านี้และไฟล์ทั้งหมด?')"><i class="fa-solid fa-trash"></i></a>
+                                    <button class="del-btn" style="background:none;border:none;cursor:pointer;"
+                                    onclick="openDelModal(
+                                        '?del_page=<?=$p['id']?>',
+                                        'ยืนยันการลบหน้า',
+                                        'ต้องการลบหน้า <strong><?=addslashes(htmlspecialchars($p['page_name']))?></strong> ใช่ไหม?<br><span style=\'color:#ef4444;font-size:.81rem;\'>ไฟล์แนบทั้งหมดในหน้านี้จะถูกลบด้วย</span>'
+                                    )"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
                                 </td>
                             </tr>
                             <?php endwhile; if($custom_pages->num_rows == 0) echo "<tr><td colspan='2' align='center'>ยังไม่มีหน้าใหม่</td></tr>"; ?>
@@ -248,6 +298,24 @@ $custom_pages = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
         </div>
     </div>
     <script src="js/manage_config.js"></script>
+
+
+    <!-- ── Delete Confirm Modal ─────────────────────────── -->
+    <div class="del-overlay" id="delModal">
+        <div class="del-box">
+            <div class="del-icon-wrap"><i class="fa-solid fa-trash-can"></i></div>
+            <h3 class="del-title" id="delTitle">ยืนยันการลบ</h3>
+            <p class="del-sub" id="delSub"></p>
+            <div class="del-btns">
+                <button class="dbtn dbtn-cancel" onclick="closeDelModal()">
+                    <i class="fa-solid fa-xmark"></i> ยกเลิก
+                </button>
+                <a class="dbtn dbtn-delete" id="delConfirmBtn" href="#">
+                    <i class="fa-solid fa-trash-can"></i> ลบเลย
+                </a>
+            </div>
+        </div>
+    </div>
 
     <!-- ── Toast notification ───────────────────────── -->
     <div id="toast" style="
@@ -292,6 +360,20 @@ $custom_pages = $conn->query("SELECT * FROM custom_pages ORDER BY id ASC");
             showToast('<?= addslashes(htmlspecialchars($error)) ?>', 'err');
         });
         <?php endif; ?>
+
+        // ── Delete confirm modal ──────────────────────────
+        function openDelModal(href, title, sub) {
+            document.getElementById('delTitle').textContent = title;
+            document.getElementById('delSub').innerHTML    = sub;
+            document.getElementById('delConfirmBtn').href  = href;
+            document.getElementById('delModal').classList.add('active');
+        }
+        function closeDelModal() {
+            document.getElementById('delModal').classList.remove('active');
+        }
+        document.getElementById('delModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDelModal();
+        });
     </script>
 </body>
 </html>
