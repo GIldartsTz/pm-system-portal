@@ -60,8 +60,7 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
     <div class="main">
         <div class="container">
             
-            <?php if($msg): ?><div class="alert alert-success" style="margin-top:20px; border-radius:10px;"><i class="fa-solid fa-circle-check"></i> <?=$msg?></div><?php endif; ?>
-            <?php if($error): ?><div class="alert alert-error" style="margin-top:20px; border-radius:10px;"><i class="fa-solid fa-circle-xmark"></i> <?=$error?></div><?php endif; ?>
+
 
             <div class="card custom-card">
                 <div style="display:flex; align-items:center; gap:20px; margin-bottom:30px;">
@@ -140,5 +139,52 @@ $files = $conn->query("SELECT * FROM custom_page_files WHERE page_id = $page_id 
             <div style="height: 40px;"></div>
         </div>
     </div>
+
+    <!-- ── Toast notification ────────────────────────────── -->
+    <div id="toast" style="
+        position:fixed; bottom:26px; right:26px;
+        background:#1e1e1e; color:#fff;
+        padding:13px 20px; border-radius:12px;
+        font-size:.88rem; font-weight:600;
+        display:flex; align-items:center; gap:10px;
+        box-shadow:0 8px 30px rgba(0,0,0,.3);
+        transform:translateY(80px); opacity:0;
+        transition:all .35s cubic-bezier(.34,1.56,.64,1);
+        z-index:10000; pointer-events:none;
+        max-width:340px; word-break:break-word;
+    "></div>
+
+    <script>
+        // ── Theme sync ──────────────────────────────────────
+        if (localStorage.getItem('theme') === 'dark')
+            document.documentElement.setAttribute('data-theme', 'dark');
+
+        // ── Toast helper ────────────────────────────────────
+        function showToast(msg, type) {
+            var t = document.getElementById('toast');
+            t.innerHTML = msg;
+            t.style.borderLeft = type === 'ok'
+                ? '4px solid #10b981'
+                : '4px solid #ef4444';
+            t.style.transform = 'translateY(0)';
+            t.style.opacity   = '1';
+            clearTimeout(t._timer);
+            t._timer = setTimeout(function () {
+                t.style.transform = 'translateY(80px)';
+                t.style.opacity   = '0';
+            }, 3800);
+        }
+
+        // ── Fire toast from PHP result ───────────────────────
+        <?php if ($msg): ?>
+        window.addEventListener('DOMContentLoaded', function () {
+            showToast('✅ <?= addslashes(htmlspecialchars($msg)) ?>', 'ok');
+        });
+        <?php elseif ($error): ?>
+        window.addEventListener('DOMContentLoaded', function () {
+            showToast('❌ <?= addslashes(htmlspecialchars($error)) ?>', 'err');
+        });
+        <?php endif; ?>
+    </script>
 </body>
 </html>
