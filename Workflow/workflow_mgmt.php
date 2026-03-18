@@ -57,25 +57,179 @@ foreach ($static_logs as $sec_name => $logs) {
     <link rel="stylesheet" href="../Workflow/css/workflow.css">
     <link rel="stylesheet" href="../Workflow/css/workflow_page.css">
     <style>
-        .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:999; align-items:center; justify-content:center; }
-        .modal-overlay.active { display:flex; }
-        .modal-content { background:var(--bg-card); border-radius:14px; padding:30px; max-width:600px; width:90%; box-shadow:0 10px 40px rgba(0,0,0,0.4); border:1px solid var(--border); }
-        .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:15px; }
-        .modal-header h3 { margin:0; font-size:1.3rem; color:var(--text-main); font-weight:600; }
-        .modal-close { background:none; border:none; font-size:1.5rem; color:var(--text-sub); cursor:pointer; padding:0; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:6px; transition:background 0.2s; }
-        .modal-close:hover { background:rgba(79,70,229,0.1); }
-        .modal-form-group { margin-bottom:15px; }
-        .modal-form-group label { display:block; margin-bottom:8px; font-weight:600; color:var(--text-main); font-size:0.95rem; }
-        .modal-form-group textarea { width:100%; padding:12px 15px; border:1px solid var(--border); border-radius:8px; resize:vertical; min-height:100px; font-family:inherit; background:var(--input-bg); color:var(--text-main); }
-        .modal-form-group textarea::placeholder { color:var(--text-sub); opacity:0.6; }
-        .modal-actions { display:flex; gap:10px; margin-top:25px; padding-top:15px; border-top:1px solid var(--border); }
-        .modal-btn { padding:10px 20px; border-radius:8px; border:none; font-weight:600; cursor:pointer; transition:all 0.2s; }
-        .modal-btn-submit { background:var(--primary); color:white; }
-        .modal-btn-submit:hover { opacity:0.9; transform:translateY(-2px); }
-        .modal-btn-cancel { background:var(--border); color:var(--text-main); }
-        .modal-btn-cancel:hover { background:rgba(79,70,229,0.1); }
-        .comment-box { background:rgba(79, 70, 229, 0.05); border-left:3px solid var(--primary); padding:12px 15px; border-radius:4px; font-size:0.9rem; margin-top:8px; line-height:1.5; }
-        .comment-label { font-weight:600; color:var(--text-sub); font-size:0.85rem; }
+        /* ── Modal overlay ─────────────────────────────── */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 999; align-items: center; justify-content: center;
+            backdrop-filter: blur(3px);
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 0;
+            max-width: 640px; width: 92%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            border: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            max-height: 90vh;
+            overflow: hidden;
+        }
+
+        /* ── Modal header ───────────────────────────────── */
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 22px 26px 18px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .modal-header-left { display: flex; align-items: center; gap: 12px; }
+        .modal-icon-wrap {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+        .modal-icon-submit  { background: #fef3c7; color: #d97706; }
+        .modal-icon-approve { background: #dcfce7; color: #16a34a; }
+        .modal-header h3 { margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--text-main); }
+        .modal-header-sub { margin: 2px 0 0; font-size: 0.8rem; color: var(--text-sub); }
+        .modal-close {
+            background: none; border: none; font-size: 1.2rem; color: var(--text-sub);
+            cursor: pointer; width: 34px; height: 34px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; transition: background 0.18s; flex-shrink: 0;
+        }
+        .modal-close:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
+
+        /* ── Modal body ─────────────────────────────────── */
+        .modal-body {
+            padding: 22px 26px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .modal-body::-webkit-scrollbar { width: 6px; }
+        .modal-body::-webkit-scrollbar-track { background: transparent; }
+        .modal-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
+
+        .modal-form-group { margin-bottom: 6px; }
+        .modal-form-group label {
+            display: flex; align-items: center; gap: 7px;
+            margin-bottom: 10px; font-weight: 600;
+            color: var(--text-main); font-size: 0.9rem;
+        }
+        .modal-form-group label i { color: var(--primary); font-size: 0.85rem; }
+
+        /* ── Textarea ───────────────────────────────────── */
+        .modal-form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            resize: vertical;
+            min-height: 140px;
+            max-height: 340px;
+            font-family: inherit;
+            font-size: 0.92rem;
+            line-height: 1.7;
+            background: var(--bg-body);
+            color: var(--text-main);
+            box-sizing: border-box;
+            transition: border-color 0.18s, box-shadow 0.18s;
+        }
+        .modal-form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+        }
+        .modal-form-group textarea::placeholder { color: var(--text-sub); opacity: 0.55; }
+
+        /* char counter */
+        .char-counter {
+            text-align: right; font-size: 0.75rem;
+            color: var(--text-sub); margin-top: 5px;
+        }
+        .char-counter.warn { color: #f59e0b; }
+        .char-counter.over { color: #ef4444; font-weight: 700; }
+
+        /* ── Modal footer ───────────────────────────────── */
+        .modal-footer {
+            display: flex; gap: 10px; justify-content: flex-end;
+            padding: 16px 26px 20px;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .modal-btn {
+            padding: 10px 22px; border-radius: 9px; border: none;
+            font-weight: 700; font-size: 0.87rem;
+            cursor: pointer; transition: all 0.18s;
+            display: inline-flex; align-items: center; gap: 7px;
+        }
+        .modal-btn-submit  { background: var(--primary); color: #fff; }
+        .modal-btn-submit:hover  { opacity: 0.88; transform: translateY(-1px); }
+        .modal-btn-approve { background: #16a34a; color: #fff; }
+        .modal-btn-approve:hover { opacity: 0.88; transform: translateY(-1px); }
+        .modal-btn-cancel  { background: var(--border); color: var(--text-main); }
+        .modal-btn-cancel:hover  { background: rgba(79,70,229,0.1); }
+
+        /* ── Comment box (in table) ─────────────────────── */
+        .comment-box {
+            background: rgba(79,70,229,0.05);
+            border: 1px solid rgba(79,70,229,0.15);
+            border-left: 3px solid var(--primary);
+            border-radius: 8px;
+            padding: 10px 13px;
+            margin-top: 8px;
+            font-size: 0.82rem;
+            line-height: 1.65;
+            color: var(--text-main);
+            word-break: break-word;
+
+            /* รองรับข้อความยาว – มี scroll ถ้าเกิน */
+            max-height: 110px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .comment-box::-webkit-scrollbar { width: 4px; }
+        .comment-box::-webkit-scrollbar-track { background: transparent; }
+        .comment-box::-webkit-scrollbar-thumb { background: rgba(79,70,229,0.25); border-radius: 4px; }
+
+        /* ปุ่มขยาย comment */
+        .comment-expand-btn {
+            background: none; border: none; padding: 0;
+            font-size: 0.73rem; color: var(--primary);
+            cursor: pointer; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 4px;
+            margin-top: 4px; opacity: 0.8;
+            transition: opacity 0.15s;
+        }
+        .comment-expand-btn:hover { opacity: 1; }
+
+        .comment-label {
+            display: flex; align-items: center; gap: 5px;
+            font-weight: 700; color: var(--text-sub);
+            font-size: 0.78rem; margin-bottom: 4px;
+            text-transform: uppercase; letter-spacing: 0.04em;
+        }
+
+        /* ── Full-text modal (read-only view) ───────────── */
+        .view-modal-content {
+            background: var(--bg-card); border-radius: 16px;
+            padding: 0; max-width: 580px; width: 92%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            border: 1px solid var(--border);
+            max-height: 85vh; display: flex; flex-direction: column;
+        }
+        .view-modal-body {
+            padding: 20px 24px 24px;
+            overflow-y: auto; flex: 1;
+        }
+        .view-modal-body pre {
+            margin: 0; font-family: inherit; font-size: 0.92rem;
+            line-height: 1.75; color: var(--text-main);
+            white-space: pre-wrap; word-break: break-word;
+        }
     </style>
 </head>
 <body>
@@ -138,11 +292,14 @@ foreach ($static_logs as $sec_name => $logs) {
                                         <?php if($row['sub_at']): ?>
                                             <span class="badge badge-done">SUBMITTED</span>
                                             <div class="wf-info"><i class="fa-solid fa-user"></i> <?=$row['sub_by']?><br><?=date('d M Y, H:i', strtotime($row['sub_at']))?></div>
-                                            <?php if(isset($row['sub_note']) && $row['sub_note']): ?>
-                                                <div class="comment-box">
-                                                    <div class="comment-label">📝 Note:</div>
-                                                    <?=htmlspecialchars($row['sub_note'])?>
-                                                </div>
+                                            <?php if(isset($row['sub_note']) && trim($row['sub_note']) !== ''): ?>
+                                                <div class="comment-label"><i class="fa-solid fa-note-sticky"></i> Note</div>
+                                                <div class="comment-box"><?=htmlspecialchars($row['sub_note'])?></div>
+                                                <?php if(mb_strlen($row['sub_note']) > 120): ?>
+                                                <button class="comment-expand-btn" onclick="viewFullText('📝 Submit Note', this.previousElementSibling.textContent)">
+                                                    <i class="fa-solid fa-expand"></i> ดูทั้งหมด
+                                                </button>
+                                                <?php endif; ?>
                                             <?php endif; ?>
                                         <?php else: ?>
                                             <span class="badge badge-pending">PENDING</span>
@@ -152,11 +309,14 @@ foreach ($static_logs as $sec_name => $logs) {
                                         <?php if($row['app_at']): ?>
                                             <span class="badge badge-done">APPROVED</span>
                                             <div class="wf-info"><i class="fa-solid fa-user-shield"></i> <?=$row['app_by']?><br><?=date('d M Y, H:i', strtotime($row['app_at']))?></div>
-                                            <?php if(isset($row['app_comment']) && $row['app_comment']): ?>
-                                                <div class="comment-box">
-                                                    <div class="comment-label">💬 Comment:</div>
-                                                    <?=htmlspecialchars($row['app_comment'])?>
-                                                </div>
+                                            <?php if(isset($row['app_comment']) && trim($row['app_comment']) !== ''): ?>
+                                                <div class="comment-label"><i class="fa-solid fa-comment"></i> Comment</div>
+                                                <div class="comment-box"><?=htmlspecialchars($row['app_comment'])?></div>
+                                                <?php if(mb_strlen($row['app_comment']) > 120): ?>
+                                                <button class="comment-expand-btn" onclick="viewFullText('💬 Approve Comment', this.previousElementSibling.textContent)">
+                                                    <i class="fa-solid fa-expand"></i> ดูทั้งหมด
+                                                </button>
+                                                <?php endif; ?>
                                             <?php endif; ?>
                                         <?php else: ?>
                                             <span class="badge badge-waiting">AWAITING</span>
@@ -197,46 +357,101 @@ foreach ($static_logs as $sec_name => $logs) {
 
     <script src="../Workflow/js/workflow.js"></script> 
     
-    <!-- Modal for Note/Comment -->
+    <!-- Note / Comment Input Modal -->
     <div class="modal-overlay" id="noteModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalTitle">Add Note</h3>
+                <div class="modal-header-left">
+                    <div class="modal-icon-wrap" id="modalIconWrap">
+                        <i class="fa-solid fa-paper-plane" id="modalIcon"></i>
+                    </div>
+                    <div>
+                        <h3 id="modalTitle">Add Note</h3>
+                        <p class="modal-header-sub" id="modalSubtitle">กรอก Note สำหรับการ Submit</p>
+                    </div>
+                </div>
                 <button class="modal-close" onclick="closeNoteModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form id="noteForm">
-                <div class="modal-form-group">
-                    <label id="labelText">Note:</label>
-                    <textarea id="noteText" placeholder="เพิ่มหมายเหตุ (ถ้ามี)..."></textarea>
+                <div class="modal-body">
+                    <div class="modal-form-group">
+                        <label id="labelText"><i class="fa-solid fa-pen-to-square"></i> <span id="labelSpan">Note:</span></label>
+                        <textarea id="noteText"
+                                  placeholder="พิมพ์ข้อความได้เลย ไม่จำกัดความยาว…"
+                                  rows="6"
+                                  maxlength="5000"
+                                  oninput="updateCharCount(this)"></textarea>
+                        <div class="char-counter" id="charCounter">0 / 5,000</div>
+                    </div>
                 </div>
-                <div class="modal-actions">
-                    <button type="submit" class="modal-btn modal-btn-submit">Submit</button>
-                    <button type="button" class="modal-btn modal-btn-cancel" onclick="closeNoteModal()">Cancel</button>
+                <div class="modal-footer">
+                    <button type="button" class="modal-btn modal-btn-cancel" onclick="closeNoteModal()">
+                        <i class="fa-solid fa-xmark"></i> ยกเลิก
+                    </button>
+                    <button type="submit" class="modal-btn modal-btn-submit" id="modalSubmitBtn">
+                        <i class="fa-solid fa-paper-plane"></i> Submit
+                    </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- View Full Text Modal (read-only) -->
+    <div class="modal-overlay" id="viewModal">
+        <div class="view-modal-content">
+            <div class="modal-header">
+                <div class="modal-header-left">
+                    <div class="modal-icon-wrap modal-icon-submit">
+                        <i class="fa-solid fa-align-left" id="viewModalIcon"></i>
+                    </div>
+                    <h3 id="viewModalTitle">ข้อความทั้งหมด</h3>
+                </div>
+                <button class="modal-close" onclick="document.getElementById('viewModal').classList.remove('active')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="view-modal-body">
+                <pre id="viewModalText"></pre>
+            </div>
+            <div class="modal-footer" style="justify-content:flex-end;">
+                <button class="modal-btn modal-btn-cancel"
+                        onclick="document.getElementById('viewModal').classList.remove('active')">
+                    <i class="fa-solid fa-xmark"></i> ปิด
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
         let currentAction = {};
 
+        /* ── Open note/comment modal ─────────────────────── */
         function openNoteModal(type, table, is_custom, id_val, year_val) {
             currentAction = { type, table, is_custom, id_val, year_val };
-            
-            const modal = document.getElementById('noteModal');
-            const title = document.getElementById('modalTitle');
-            const label = document.getElementById('labelText');
-            
-            if(type === 'submit') {
-                title.textContent = 'Submit with Note';
-                label.textContent = 'Note (for submission):';
-            } else {
-                title.textContent = 'Approve with Comment';
-                label.textContent = 'Comment (for approval):';
-            }
-            
+
+            const isSubmit = (type === 'submit');
+
+            document.getElementById('modalTitle').textContent    = isSubmit ? 'Submit with Note' : 'Approve with Comment';
+            document.getElementById('modalSubtitle').textContent = isSubmit ? 'กรอก Note สำหรับการ Submit (ถ้ามี)' : 'กรอก Comment สำหรับการ Approve (ถ้ามี)';
+            document.getElementById('labelSpan').textContent     = isSubmit ? 'Note:' : 'Comment:';
+            document.getElementById('noteText').placeholder      = isSubmit ? 'พิมพ์ Note… (ไม่บังคับ)' : 'พิมพ์ Comment… (ไม่บังคับ)';
+
+            // icon + colour
+            const iconWrap = document.getElementById('modalIconWrap');
+            const icon     = document.getElementById('modalIcon');
+            const submitBtn = document.getElementById('modalSubmitBtn');
+            iconWrap.className = 'modal-icon-wrap ' + (isSubmit ? 'modal-icon-submit' : 'modal-icon-approve');
+            icon.className     = 'fa-solid ' + (isSubmit ? 'fa-paper-plane' : 'fa-stamp');
+            submitBtn.className = 'modal-btn ' + (isSubmit ? 'modal-btn-submit' : 'modal-btn-approve');
+            submitBtn.innerHTML = isSubmit
+                ? '<i class="fa-solid fa-paper-plane"></i> Submit'
+                : '<i class="fa-solid fa-stamp"></i> Approve';
+
             document.getElementById('noteText').value = '';
-            modal.classList.add('active');
+            document.getElementById('charCounter').textContent = '0 / 5,000';
+            document.getElementById('charCounter').className   = 'char-counter';
+            document.getElementById('noteModal').classList.add('active');
+            setTimeout(() => document.getElementById('noteText').focus(), 80);
         }
 
         function closeNoteModal() {
@@ -244,52 +459,64 @@ foreach ($static_logs as $sec_name => $logs) {
             currentAction = {};
         }
 
+        /* ── Char counter ────────────────────────────────── */
+        function updateCharCount(el) {
+            const len = el.value.length;
+            const max = parseInt(el.getAttribute('maxlength')) || 5000;
+            const counter = document.getElementById('charCounter');
+            counter.textContent = len.toLocaleString() + ' / ' + max.toLocaleString();
+            counter.className = 'char-counter' + (len >= max ? ' over' : len >= max * 0.85 ? ' warn' : '');
+        }
+
+        /* ── View full text (read-only) ──────────────────── */
+        function viewFullText(title, text) {
+            document.getElementById('viewModalTitle').textContent = title;
+            document.getElementById('viewModalText').textContent  = text;
+            document.getElementById('viewModal').classList.add('active');
+        }
+        document.getElementById('viewModal').addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
+        });
+
+        /* ── Form submit ─────────────────────────────────── */
         document.getElementById('noteForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const noteText = document.getElementById('noteText').value;
-            
-            let payload = { 
-                type: currentAction.type, 
-                table: currentAction.table, 
-                is_custom: currentAction.is_custom 
+            const noteText = document.getElementById('noteText').value.trim();
+            const submitBtn = document.getElementById('modalSubmitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังบันทึก…';
+
+            let payload = {
+                type: currentAction.type,
+                table: currentAction.table,
+                is_custom: currentAction.is_custom
             };
-            
-            if(currentAction.is_custom === 1) {
+            if (currentAction.is_custom === 1) {
                 payload.page_id = currentAction.id_val;
             } else {
                 payload.month = currentAction.id_val;
-                payload.year = currentAction.year_val;
+                payload.year  = currentAction.year_val;
             }
-            
-            // Add note/comment based on action type
-            if(currentAction.type === 'submit') {
-                payload.sub_note = noteText;
-            } else if(currentAction.type === 'approve') {
-                payload.app_comment = noteText;
-            }
+            if (currentAction.type === 'submit')  payload.sub_note    = noteText;
+            if (currentAction.type === 'approve') payload.app_comment = noteText;
 
             fetch('update_workflow.php', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             })
             .then(r => r.json())
             .then(d => {
-                if(d.success) {
-                    closeNoteModal();
-                    location.reload();
-                } else {
-                    alert('Error: ' + d.error);
-                }
+                if (d.success) { closeNoteModal(); location.reload(); }
+                else { alert('Error: ' + d.error); }
             })
-            .catch(err => {
-                console.error('Fetch Error:', err);
-                alert('ไม่สามารถติดต่อไฟล์ update_workflow.php ได้ครับ');
+            .catch(() => alert('ไม่สามารถติดต่อไฟล์ update_workflow.php ได้ครับ'))
+            .finally(() => {
+                submitBtn.disabled = false;
             });
         });
 
-        // Close modal when clicking outside
         document.getElementById('noteModal').addEventListener('click', function(e) {
-            if(e.target === this) closeNoteModal();
+            if (e.target === this) closeNoteModal();
         });
     </script>
