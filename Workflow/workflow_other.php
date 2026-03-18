@@ -129,6 +129,55 @@ if($check_cp && $check_cp->num_rows > 0) {
         .view-modal-content { background:var(--bg-card); border-radius:16px; padding:0; max-width:580px; width:92%; box-shadow:0 20px 60px rgba(0,0,0,0.35); border:1px solid var(--border); max-height:85vh; display:flex; flex-direction:column; }
         .view-modal-body { padding:20px 24px 24px; overflow-y:auto; flex:1; }
         .view-modal-body pre { margin:0; font-family:inherit; font-size:0.92rem; line-height:1.75; color:var(--text-main); white-space:pre-wrap; word-break:break-word; }
+
+        /* ── Confirm modal (cancel actions) ─────────────── */
+        .confirm-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000; align-items: center; justify-content: center;
+            backdrop-filter: blur(3px);
+        }
+        .confirm-overlay.active { display: flex; }
+        .confirm-box {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 32px 28px 26px;
+            max-width: 420px; width: 92%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .confirm-icon-wrap {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: #fef3c7; color: #d97706;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; margin: 0 auto 16px;
+        }
+        .confirm-icon-wrap.is-cancel-approve {
+            background: #ede9fe; color: #6366f1;
+        }
+        .confirm-title {
+            margin: 0 0 8px; font-size: 1.15rem;
+            font-weight: 800; color: var(--text-main);
+        }
+        .confirm-sub {
+            margin: 0 0 24px; font-size: 0.87rem;
+            color: var(--text-sub); line-height: 1.65;
+        }
+        .confirm-sub strong { color: var(--text-main); }
+        .confirm-btns { display: flex; gap: 10px; justify-content: center; }
+        .cbtn {
+            padding: 10px 24px; border-radius: 10px; border: none;
+            font-weight: 700; font-size: 0.88rem;
+            cursor: pointer; transition: all 0.16s;
+            display: inline-flex; align-items: center; gap: 7px;
+        }
+        .cbtn-back   { background: var(--border); color: var(--text-main); }
+        .cbtn-back:hover { background: rgba(79,70,229,0.1); }
+        .cbtn-confirm-submit  { background: linear-gradient(135deg,#ef4444,#b91c1c); color:#fff; }
+        .cbtn-confirm-submit:hover  { opacity:.88; transform:translateY(-1px); }
+        .cbtn-confirm-approve { background: linear-gradient(135deg,#6366f1,#4338ca); color:#fff; }
+        .cbtn-confirm-approve:hover { opacity:.88; transform:translateY(-1px); }
     </style>
 </head>
 <body>
@@ -251,6 +300,26 @@ if($check_cp && $check_cp->num_rows > 0) {
             </div>
 
             <div style="height: 40px;"></div>
+        </div>
+    </div>
+
+
+    <!-- ── Confirm Cancel Modal ──────────────────────────── -->
+    <div class="confirm-overlay" id="confirmCancelModal">
+        <div class="confirm-box">
+            <div class="confirm-icon-wrap" id="confirmIconWrap">
+                <i class="fa-solid fa-rotate-left" id="confirmIcon"></i>
+            </div>
+            <h3 class="confirm-title" id="confirmTitle">ยืนยันการยกเลิก</h3>
+            <p class="confirm-sub" id="confirmSub"></p>
+            <div class="confirm-btns">
+                <button class="cbtn cbtn-back" onclick="closeConfirmCancel()">
+                    <i class="fa-solid fa-xmark"></i> ไม่ใช่
+                </button>
+                <button class="cbtn cbtn-confirm-submit" id="confirmCancelBtn">
+                    <i class="fa-solid fa-rotate-left"></i> ยืนยัน
+                </button>
+            </div>
         </div>
     </div>
 
@@ -404,24 +473,80 @@ if($check_cp && $check_cp->num_rows > 0) {
             .finally(() => { submitBtn.disabled = false; });
         });
 
+        document.getElementById('noteModal').addEventListener('click', function(e) {
+            if (e.target === this) closeNoteModal();
+        });
+
+        /* ── Confirm cancel modal ────────────────────────── */
+        let _cancelPayload = null;
+
         function handleAction(type, table, is_custom, id_val, month_val, year_val) {
-            const names = { cancel_submit: 'ยกเลิกการ Submit', cancel_approve: 'ยกเลิกการ Approve' };
-            if (!confirm('ยืนยันการทำรายการ: ' + names[type] + ' ใช่หรือไม่?')) return;
-            let payload = { type, table, is_custom };
-            if (is_custom === 1) { payload.page_id = id_val; payload.month = month_val; payload.year = year_val; }
-            else { payload.month = id_val; payload.year = year_val; }
+            _cancelPayload = { type, table, is_custom, id_val, month_val, year_val };
+
+            const isCancelApprove = (type === 'cancel_approve');
+            const iconWrap = document.getElementById('confirmIconWrap');
+            const btn      = document.getElementById('confirmCancelBtn');
+
+            iconWrap.className = 'confirm-icon-wrap' + (isCancelApprove ? ' is-cancel-approve' : '');
+            document.getElementById('confirmIcon').className = 'fa-solid fa-rotate-left';
+            document.getElementById('confirmTitle').textContent = isCancelApprove
+                ? 'ยืนยันการยกเลิก Approve'
+                : 'ยืนยันการยกเลิก Submit';
+            document.getElementById('confirmSub').innerHTML = isCancelApprove
+                ? 'คุณต้องการ<strong>ยกเลิก Approve</strong> รายการนี้ใช่ไหม?<br><span style="color:#6366f1;font-size:.81rem;">สถานะจะถูกรีเซ็ตกลับไปรอ Approve ใหม่</span>'
+                : 'คุณต้องการ<strong>ยกเลิก Submit</strong> รายการนี้ใช่ไหม?<br><span style="color:#ef4444;font-size:.81rem;">สถานะจะถูกรีเซ็ตกลับไปเป็น Pending</span>';
+            btn.className = 'cbtn ' + (isCancelApprove ? 'cbtn-confirm-approve' : 'cbtn-confirm-submit');
+            btn.innerHTML = '<i class="fa-solid fa-rotate-left"></i> ' + (isCancelApprove ? 'ยืนยัน ยกเลิก Approve' : 'ยืนยัน ยกเลิก Submit');
+
+            document.getElementById('confirmCancelModal').classList.add('active');
+        }
+
+        function closeConfirmCancel() {
+            document.getElementById('confirmCancelModal').classList.remove('active');
+            _cancelPayload = null;
+        }
+
+        document.getElementById('confirmCancelModal').addEventListener('click', function(e) {
+            if (e.target === this) closeConfirmCancel();
+        });
+
+        document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+            if (!_cancelPayload) return;
+            const payload_snap = _cancelPayload;
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังดำเนินการ…';
+
+            let payload = {
+                type:      payload_snap.type,
+                table:     payload_snap.table,
+                is_custom: payload_snap.is_custom
+            };
+            if (payload_snap.is_custom === 1) {
+                payload.page_id   = payload_snap.id_val;
+                payload.month     = payload_snap.month_val;
+                payload.year      = payload_snap.year_val;
+            } else {
+                payload.month = payload_snap.id_val;
+                payload.year  = payload_snap.year_val;
+            }
+
             fetch('update_workflow.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             })
             .then(r => r.json())
-            .then(d => { if (d.success) location.reload(); else alert('Error: ' + d.error); })
-            .catch(() => alert('ไม่สามารถติดต่อไฟล์ update_workflow.php ได้ครับ'));
-        }
-
-        document.getElementById('noteModal').addEventListener('click', function(e) {
-            if (e.target === this) closeNoteModal();
+            .then(d => {
+                closeConfirmCancel();
+                if (d.success) location.reload();
+                else alert('Error: ' + d.error);
+            })
+            .catch(() => {
+                closeConfirmCancel();
+                alert('ไม่สามารถติดต่อไฟล์ update_workflow.php ได้ครับ');
+            })
+            .finally(() => { btn.disabled = false; });
         });
     </script>
 </body> 
